@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+
 import { Inter, Poppins } from "next/font/google";
+
 import "./globals.css";
-import { Toaster } from "sonner";
+
+import AuthProvider from "@/components/providers/auth-provider";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
@@ -14,8 +18,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Commerce Platform",
-  description: "Modern Ecommerce Platform",
+  title: "Ecommerce Store",
+  description: "Modern Ecommerce",
 };
 
 export default function RootLayout({
@@ -26,10 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${poppins.variable} antialiased`}
+        className={`${inter.variable} ${poppins.variable}`}
       >
-        {children}
-        <Toaster richColors position="top-right" />
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+
 import { Inter, Poppins } from "next/font/google";
+
 import "./globals.css";
+
+import AuthProvider from "@/components/protected-route";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,9 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${poppins.variable} antialiased`}
+        className={`${inter.variable} ${poppins.variable}`}
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
