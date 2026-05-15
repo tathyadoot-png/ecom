@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-ivory: #FDFCF0;
+  --color-brand-navy: #001F3F; /* Deep Professional Navy */
+  --color-brand-navy-light: #083358;
+  --color-brand-gold: #C5A059; /* Accent for a premium feel */
+}
+
+body {
+  background-color: var(--color-brand-ivory);
+  color: var(--color-brand-navy);
+  font-family: 'Inter', sans-serif; /* High-quality professional font */
+}
+
+/* Tracking removed as per instruction */
+* {
+  letter-spacing: normal !important;
+}
+
+/* Premium Glassmorphism for Navy Theme */
+.glass-navy {
+  background: rgba(0, 31, 63, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 31, 63, 0.1);
+}
+
+/* Custom Selection in Navy */
+::selection {
+  background: var(--color-brand-navy);
+  color: white;
+}
+
+/* Clean Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-navy);
+  border-radius: 10px;
+}
