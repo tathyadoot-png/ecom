@@ -4,8 +4,7 @@ import { Inter, Poppins } from "next/font/google";
 
 import "./globals.css";
 
-import AuthProvider from "@/components/protected-route";
-
+import AuthProvider from "@/components/providers/auth-provider";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
@@ -29,9 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} ${poppins.variable}`}
-      >
+     <body
+  className={`${inter.variable} ${poppins.variable} font-sans antialiased`}
+>
         <AuthProvider>
           {children}
         </AuthProvider>

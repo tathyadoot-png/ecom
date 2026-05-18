@@ -1,24 +1,50 @@
-"use client";
-
-import { useAuthStore } from "@/store/auth-store";
-
 export default function HomePage() {
-  const { user, logout } =
-    useAuthStore();
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       
-      <h1 className="text-4xl font-bold">
-        Welcome {user?.name}
-      </h1>
+      <div>
+        <h1>Dashboard</h1>
 
-      <button
-        onClick={logout}
-        className="bg-red-500 text-white px-6 py-3 rounded-lg"
-      >
-        Logout
-      </button>
+        <p className="text-muted-foreground">
+          Welcome to admin panel
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+        <div className="bg-card border rounded-2xl p-6 shadow-sm">
+          <p className="text-muted-foreground text-sm">
+            Total Products
+          </p>
+
+          <h2 className="mt-2">0</h2>
+        </div>
+
+        <div className="bg-card border rounded-2xl p-6 shadow-sm">
+          <p className="text-muted-foreground text-sm">
+            Total Orders
+          </p>
+
+          <h2 className="mt-2">0</h2>
+        </div>
+
+        <div className="bg-card border rounded-2xl p-6 shadow-sm">
+          <p className="text-muted-foreground text-sm">
+            Customers
+          </p>
+
+          <h2 className="mt-2">0</h2>
+        </div>
+
+        <div className="bg-card border rounded-2xl p-6 shadow-sm">
+          <p className="text-muted-foreground text-sm">
+            Revenue
+          </p>
+
+          <h2 className="mt-2">₹0</h2>
+        </div>
+
+      </div>
 
     </div>
   );

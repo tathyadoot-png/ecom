@@ -15,7 +15,7 @@ export default function Sidebar() {
   const { logout } = useAuthStore();
 
   return (
-    <aside className="w-64 min-h-screen bg-black text-white flex flex-col justify-between p-6">
+    <aside className="w-64 min-h-screen bg-zinc-950 border-r border-zinc-800 text-white flex flex-col justify-between p-6">
       
       <div>
         
@@ -65,7 +65,7 @@ export default function Sidebar() {
       console.log(error);
     }
   }}
-  className="flex items-center gap-3 bg-red-500 hover:bg-red-600 transition-all p-3 rounded-xl"
+  className="flex items-center gap-3 bg-red-600 hover:bg-red-600 transition-all p-3 rounded-xl"
 >
   <LogOut size={20} />
 
