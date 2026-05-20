@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
-import { Inter, Poppins } from "next/font/google";
+import {
+  Inter,
+} from "next/font/google";
 
 import "./globals.css";
 
@@ -11,16 +13,12 @@ const inter = Inter({
   variable: "--font-body",
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  weight: ["400", "500", "600", "700"],
-});
-
-export const metadata: Metadata = {
-  title: "Ecommerce Store",
-  description: "Modern Ecommerce",
-};
+export const metadata: Metadata =
+  {
+    title: "Ecommerce Store",
+    description:
+      "Modern Ecommerce Store",
+  };
 
 export default function RootLayout({
   children,
@@ -30,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${poppins.variable}`}
+        className={
+          inter.className
+        }
       >
         <AuthProvider>
           {children}

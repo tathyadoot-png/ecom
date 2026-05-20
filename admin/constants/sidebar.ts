@@ -4,6 +4,7 @@ import {
   Package,
   Users,
   LogOut,
+  FolderTree,
 } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
@@ -30,4 +31,9 @@ export const SIDEBAR_ITEMS = [
     href: "/customers",
     icon: Users,
   },
+ {
+  title: "Categories",
+  href: "/categories",
+  icon: FolderTree,
+},
 ];

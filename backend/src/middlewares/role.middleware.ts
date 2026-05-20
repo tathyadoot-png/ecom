@@ -1,6 +1,11 @@
-import { NextFunction, Response } from "express";
+import {
+  NextFunction,
+  Response,
+} from "express";
 
 import { AuthRequest } from "./auth.middleware";
+
+import { ApiError } from "../utils/ApiError";
 
 export const roleMiddleware = (
   ...roles: string[]
@@ -11,17 +16,21 @@ export const roleMiddleware = (
     next: NextFunction
   ) => {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
+      throw new ApiError(
+        401,
+        "Unauthorized"
+      );
     }
 
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      });
+    if (
+      !roles.includes(
+        req.user.role
+      )
+    ) {
+      throw new ApiError(
+        403,
+        "Forbidden"
+      );
     }
 
     next();

@@ -13,13 +13,31 @@ export default function ProtectedRoute({
 }) {
   const router = useRouter();
 
-  const { user } = useAuthStore();
+  const {
+    user,
+    loading,
+  } = useAuthStore();
 
   useEffect(() => {
-    if (!user) {
+    if (
+      !loading &&
+      !user
+    ) {
       router.push("/login");
     }
-  }, [user]);
+  }, [
+    user,
+    loading,
+    router,
+  ]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
 
   if (!user) {
     return null;

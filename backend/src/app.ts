@@ -5,6 +5,11 @@ import authRoutes from "./modules/auth/auth.routes";
 
 import testRoutes from "./routes/test.routes";
 import cookieParser from "cookie-parser";
+import { errorMiddleware } from "./middlewares/error.middleware";
+
+import productRoutes from "./modules/products/product.routes";
+
+import categoryRoutes from "./modules/products/category.routes";
 const app = express();
 
 app.use(
@@ -26,5 +31,14 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/test", testRoutes);
+app.use(errorMiddleware);
+app.use(
+  "/api/products",
+  productRoutes
+);
 
+app.use(
+  "/api/categories",
+  categoryRoutes
+);
 export default app;

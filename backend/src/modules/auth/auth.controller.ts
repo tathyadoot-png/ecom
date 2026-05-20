@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
+
 import { AuthRequest } from "../../middlewares/auth.middleware";
+
 import {
   loginUser,
   registerUser,
@@ -10,12 +12,17 @@ import {
   registerSchema,
 } from "./auth.validation";
 
-export const register = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const validatedData = registerSchema.parse(req.body);
+import { asyncHandler } from "../../utils/asyncHandler";
+
+import { successResponse } from "../../utils/response";
+
+export const register = asyncHandler(
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    const validatedData =
+      registerSchema.parse(req.body);
 
     const user = await registerUser(
       validatedData.name,
@@ -23,24 +30,20 @@ export const register = async (
       validatedData.password
     );
 
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
+    return successResponse(
+      res,
+      "User registered successfully",
       user,
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+      201
+    );
   }
-};
+);
 
-export const login = async (
-  req: Request,
-  res: Response
-) => {
-  try {
+export const login = asyncHandler(
+  async (
+    req: Request,
+    res: Response
+  ) => {
     const validatedData =
       loginSchema.parse(req.body);
 
@@ -52,58 +55,55 @@ export const login = async (
     res.cookie("token", data.token, {
       httpOnly: true,
 
-      secure: false,
+      secure:
+        process.env.NODE_ENV ===
+        "production",
 
-      sameSite: "lax",
+      sameSite:
+        process.env.NODE_ENV ===
+        "production"
+          ? "none"
+          : "lax",
 
       maxAge:
-        7 * 24 * 60 * 60 * 1000,
+        7 *
+        24 *
+        60 *
+        60 *
+        1000,
     });
 
-    res.status(200).json({
-      success: true,
-
-      message: "Login successful",
-
-      user: data.user,
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      success: false,
-
-      message: error.message,
-    });
+    return successResponse(
+      res,
+      "Login successful",
+      data.user
+    );
   }
-};
+);
 
-
-export const getMe = async (
-  req: AuthRequest,
-  res: Response
-) => {
-  try {
-    const user = req.user;
-
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed",
-    });
+export const getMe = asyncHandler(
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    return successResponse(
+      res,
+      "User fetched successfully",
+      req.user
+    );
   }
-};
+);
 
-export const logout = async (
-  req: Request,
-  res: Response
-) => {
-  res.clearCookie("token");
+export const logout = asyncHandler(
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    res.clearCookie("token");
 
-  res.status(200).json({
-    success: true,
-    message: "Logged out",
-  });
-};
+    return successResponse(
+      res,
+      "Logged out successfully"
+    );
+  }
+);

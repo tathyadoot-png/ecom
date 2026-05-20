@@ -3,18 +3,25 @@ import jwt from "jsonwebtoken";
 
 import { User } from "./auth.model";
 
+import { ApiError } from "../../utils/ApiError";
+
 export const registerUser = async (
   name: string,
   email: string,
   password: string
 ) => {
-  const existingUser = await User.findOne({ email });
+  const existingUser =
+    await User.findOne({ email });
 
   if (existingUser) {
-    throw new Error("User already exists");
+    throw new ApiError(
+      400,
+      "User already exists"
+    );
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword =
+    await bcrypt.hash(password, 10);
 
   const user = await User.create({
     name,
@@ -29,19 +36,28 @@ export const loginUser = async (
   email: string,
   password: string
 ) => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({
+    email,
+  });
 
   if (!user) {
-    throw new Error("Invalid credentials");
+    throw new ApiError(
+      401,
+      "Invalid credentials"
+    );
   }
 
-  const isPasswordCorrect = await bcrypt.compare(
-    password,
-    user.password
-  );
+  const isPasswordCorrect =
+    await bcrypt.compare(
+      password,
+      user.password
+    );
 
   if (!isPasswordCorrect) {
-    throw new Error("Invalid credentials");
+    throw new ApiError(
+      401,
+      "Invalid credentials"
+    );
   }
 
   const token = jwt.sign(
@@ -59,4 +75,4 @@ export const loginUser = async (
     token,
     user,
   };
-};
+};  

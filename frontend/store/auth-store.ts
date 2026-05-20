@@ -10,8 +10,14 @@ interface User {
 interface AuthState {
   user: User | null;
 
+  loading: boolean;
+
   setUser: (
     user: User | null
+  ) => void;
+
+  setLoading: (
+    loading: boolean
   ) => void;
 
   logout: () => void;
@@ -21,13 +27,16 @@ export const useAuthStore =
   create<AuthState>((set) => ({
     user: null,
 
-    setUser: (user) => {
-      set({ user });
-    },
+    loading: true,
 
-    logout: () => {
+    setUser: (user) =>
+      set({ user }),
+
+    setLoading: (loading) =>
+      set({ loading }),
+
+    logout: () =>
       set({
         user: null,
-      });
-    },
+      }),
   }));

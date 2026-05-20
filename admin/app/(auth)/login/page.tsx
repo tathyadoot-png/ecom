@@ -41,7 +41,7 @@ export default function LoginPage() {
         }
       );
 
-      setUser(res.data.user);
+      setUser(res.data.data);
 
       router.push("/");
     } catch (error: any) {

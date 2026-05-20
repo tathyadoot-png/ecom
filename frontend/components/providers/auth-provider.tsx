@@ -11,8 +11,10 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { setUser } =
-    useAuthStore();
+  const {
+    setUser,
+    setLoading,
+  } = useAuthStore();
 
   useEffect(() => {
     const fetchUser =
@@ -28,6 +30,8 @@ export default function AuthProvider({
           );
         } catch {
           setUser(null);
+        } finally {
+          setLoading(false);
         }
       };
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-
+import { Toaster } from "sonner";
 import { Inter, Poppins } from "next/font/google";
 
 import "./globals.css";
@@ -28,11 +28,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-     <body
-  className={`${inter.variable} ${poppins.variable} font-sans antialiased`}
->
+  <body className={`${inter.className}`}>
+    
         <AuthProvider>
           {children}
+          <Toaster richColors />
         </AuthProvider>
       </body>
     </html>
