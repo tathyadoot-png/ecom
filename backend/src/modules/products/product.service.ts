@@ -1,0 +1,201 @@
+import { Product, ProductStatus } from "./product.model";
+
+import { Category } from "./category.model";
+
+import { ApiError } from "../../utils/ApiError";
+
+export const createProduct = async (data: any, userId: string) => {
+  // Check category
+  const category = await Category.findById(data.category);
+
+  if (!category) {
+    throw new ApiError(404, "Category not found");
+  }
+
+  // Check slug uniqueness
+  const existingProduct = await Product.findOne({
+    slug: data.slug,
+  });
+
+  if (existingProduct) {
+    throw new ApiError(400, "Product slug already exists");
+  }
+
+  const product = await Product.create({
+    ...data,
+
+    createdBy: userId,
+  });
+
+  return product;
+};
+
+export const getProducts = async (query: any) => {
+  const page = Number(query.page) || 1;
+
+  const limit = Number(query.limit) || 10;
+
+  const skip = (page - 1) * limit;
+
+  const search = query.search || "";
+
+  const category = query.category || "";
+
+  const featured = query.featured;
+
+  let sortOption = {};
+
+  // Sorting
+  switch (query.sort) {
+    case "price_asc":
+      sortOption = {
+        price: 1,
+      };
+      break;
+
+    case "price_desc":
+      sortOption = {
+        price: -1,
+      };
+      break;
+
+    default:
+      sortOption = {
+        createdAt: -1,
+      };
+  }
+
+  const filter: any = {
+    isActive: true,
+
+    status: ProductStatus.PUBLISHED,
+  };
+
+  // Search
+  if (search) {
+    filter.$text = {
+      $search: search,
+    };
+  }
+
+  // Category filter
+  if (category) {
+    filter.category = category;
+  }
+
+  // Featured filter
+  if (featured === "true") {
+    filter.featured = true;
+  }
+
+  const products = await Product.find(filter)
+
+    .populate("category", "name slug")
+
+    .sort(sortOption)
+
+    .skip(skip)
+
+    .limit(limit);
+
+  const total = await Product.countDocuments(filter);
+
+  return {
+    products,
+
+    pagination: {
+      total,
+
+      page,
+
+      limit,
+
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+export const getSingleProduct = async (slug: string) => {
+  const product = await Product.findOne({
+    slug,
+
+    isActive: true,
+
+    status: ProductStatus.PUBLISHED,
+  }).populate("category", "name slug");
+
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  return product;
+};
+
+export const updateProduct = async (productId: string, data: any) => {
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  // Slug uniqueness check
+  if (data.slug && data.slug !== product.slug) {
+    const existingSlug = await Product.findOne({
+      slug: data.slug,
+    });
+
+    if (existingSlug) {
+      throw new ApiError(400, "Slug already exists");
+    }
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(productId, data, {
+    returnDocument: "after",
+  });
+
+  return updatedProduct;
+};
+
+
+
+export const getProductById =
+  async (
+    productId: string
+  ) => {
+    const product =
+      await Product.findById(
+        productId
+      ).populate(
+        "category",
+        "name slug"
+      );
+
+    if (!product) {
+      throw new ApiError(
+        404,
+        "Product not found"
+      );
+    }
+
+    return product;
+  };
+
+
+export const deleteProduct = async (productId: string) => {
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  await Product.findByIdAndDelete(productId);
+
+  return true;
+};
+
+
+
+
+
+
+  
