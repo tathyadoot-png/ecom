@@ -160,4 +160,65 @@ export const getSingleOrder =
     }
 
     return order;
+
+    
+  };
+
+
+
+  export const getAllOrdersAdminService =
+  async () => {
+    const orders =
+      await Order.find()
+
+        .populate(
+          "user",
+          "name email"
+        )
+
+        .populate(
+          "items.product",
+          "title images"
+        )
+
+        .sort({
+          createdAt: -1,
+        });
+
+    return orders;
+  };
+
+export const updateOrderStatusService =
+  async (
+    orderId: string,
+   status: OrderStatus
+  ) => {
+    const order =
+      await Order.findById(
+        orderId
+      );
+
+    if (!order) {
+      throw new ApiError(
+        404,
+        "Order not found"
+      );
+    }
+
+    order.orderStatus =
+      status;
+
+    if (
+      status ===
+      "DELIVERED"
+    ) {
+      order.isDelivered = true;
+
+      order.deliveredAt =
+        new Date();
+    }
+
+    await order.save();
+
+    return order;
   };

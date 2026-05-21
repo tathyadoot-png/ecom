@@ -65,6 +65,10 @@ export interface IOrder
 
   paymentStatus: string;
 
+  isDelivered: boolean;
+
+  deliveredAt?: Date;
+
   subtotal: number;
 
   shippingFee: number;
@@ -73,7 +77,6 @@ export interface IOrder
 
   orderStatus: OrderStatus;
 }
-
 const orderItemSchema =
   new Schema<IOrderItem>(
     {
@@ -179,6 +182,15 @@ const orderSchema =
 
         default: "PENDING",
       },
+
+      isDelivered: {
+  type: Boolean,
+  default: false,
+},
+
+deliveredAt: {
+  type: Date,
+},
 
       subtotal: {
         type: Number,

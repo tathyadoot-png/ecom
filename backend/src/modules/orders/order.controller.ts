@@ -17,6 +17,12 @@ import {
   getSingleOrder,
 } from "./order.service";
 
+import {
+  getAllOrdersAdminService,
+  updateOrderStatusService,
+} from "./order.service";
+
+
 export const create =
   asyncHandler(
     async (
@@ -76,6 +82,44 @@ export const getOne =
       return successResponse(
         res,
         "Order fetched successfully",
+        order
+      );
+    }
+  );
+
+
+  export const getAllOrdersAdmin =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+      const orders =
+        await getAllOrdersAdminService();
+
+      return successResponse(
+        res,
+        "Orders fetched successfully",
+        orders
+      );
+    }
+  );
+
+export const updateOrderStatus =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+      const order =
+        await updateOrderStatusService(
+          req.params.id as string,
+          req.body.status
+        );
+
+      return successResponse(
+        res,
+        "Order updated successfully",
         order
       );
     }
