@@ -8,21 +8,17 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-import { loginUser } from "@/services/auth.service";
+import { registerUser } from "@/services/auth.service";
 
-import { useAuthStore } from "@/store/auth-store";
-
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
-
-  const { setUser } =
-    useAuthStore();
 
   const [loading, setLoading] =
     useState(false);
 
   const [formData, setFormData] =
     useState({
+      name: "",
       email: "",
       password: "",
     });
@@ -45,24 +41,22 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const res =
-        await loginUser(
-          formData.email,
-          formData.password
-        );
-
-      setUser(res.data);
-
-      toast.success(
-        "Login successful"
+      await registerUser(
+        formData.name,
+        formData.email,
+        formData.password
       );
 
-      router.push("/");
+      toast.success(
+        "Account created successfully"
+      );
+
+      router.push("/login");
     } catch (error: any) {
       toast.error(
         error?.response?.data
           ?.message ||
-          "Login failed"
+          "Registration failed"
       );
     } finally {
       setLoading(false);
@@ -80,17 +74,27 @@ export default function LoginPage() {
         <div className="mb-6">
           
           <h1 className="text-4xl font-bold">
-            Login
+            Register
           </h1>
 
           <p className="mt-2 text-sm text-zinc-500">
-            Welcome back
+            Create your account
           </p>
 
         </div>
 
         <div className="space-y-4">
           
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            required
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full h-12 rounded-xl border border-zinc-200 bg-zinc-50 px-4"
+          />
+
           <input
             type="email"
             name="email"
@@ -116,20 +120,20 @@ export default function LoginPage() {
             className="w-full h-12 rounded-xl bg-black text-white font-semibold hover:bg-zinc-800 transition-all"
           >
             {loading
-              ? "Logging in..."
-              : "Login"}
+              ? "Creating..."
+              : "Create Account"}
           </button>
 
         </div>
 
         <p className="text-sm text-zinc-500 mt-6 text-center">
-          Don't have an account?{" "}
+          Already have an account?{" "}
           
           <Link
-            href="/register"
+            href="/login"
             className="text-black font-semibold"
           >
-            Register
+            Login
           </Link>
         </p>
 
