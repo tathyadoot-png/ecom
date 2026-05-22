@@ -3,7 +3,7 @@ import Navbar from "@/components/navbar";
 export default function HomePage() {
   return (
     <>
-      <Navbar />
+
 
       <main className="min-h-screen flex items-center justify-center">
         

@@ -76,7 +76,16 @@ export interface IOrder
   totalAmount: number;
 
   orderStatus: OrderStatus;
+
+  // RAZORPAY
+
+  razorpayOrderId?: string;
+
+  razorpayPaymentId?: string;
+
+  razorpaySignature?: string;
 }
+
 const orderItemSchema =
   new Schema<IOrderItem>(
     {
@@ -184,13 +193,28 @@ const orderSchema =
       },
 
       isDelivered: {
-  type: Boolean,
-  default: false,
-},
+        type: Boolean,
 
-deliveredAt: {
-  type: Date,
-},
+        default: false,
+      },
+
+      deliveredAt: {
+        type: Date,
+      },
+
+      // RAZORPAY
+
+      razorpayOrderId: {
+        type: String,
+      },
+
+      razorpayPaymentId: {
+        type: String,
+      },
+
+      razorpaySignature: {
+        type: String,
+      },
 
       subtotal: {
         type: Number,

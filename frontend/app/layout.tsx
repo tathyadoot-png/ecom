@@ -8,7 +8,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import AuthProvider from "@/components/providers/auth-provider";
 import Navbar from "@/components/layout/navbar";
-
+import Script from "next/script";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-body",
@@ -28,6 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      
       <body
         className={
           inter.className
@@ -41,6 +42,7 @@ export default function RootLayout({
     position="top-right"
   />
         </AuthProvider>
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       </body>
     </html>
   );
