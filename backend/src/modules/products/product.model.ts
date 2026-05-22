@@ -18,25 +18,33 @@ const productSchema = new Schema(
   {
     title: {
       type: String,
+
       required: true,
+
       trim: true,
     },
 
     slug: {
       type: String,
+
       required: true,
+
       unique: true,
+
       lowercase: true,
+
       trim: true,
     },
 
     description: {
       type: String,
+
       required: true,
     },
 
     shortDescription: {
       type: String,
+
       default: "",
     },
 
@@ -51,19 +59,25 @@ const productSchema = new Schema(
 
     price: {
       type: Number,
+
       required: true,
+
       min: 0,
     },
 
     salePrice: {
       type: Number,
+
       default: 0,
+
       min: 0,
     },
 
     stock: {
       type: Number,
+
       required: true,
+
       min: 0,
     },
 
@@ -85,13 +99,29 @@ const productSchema = new Schema(
       },
     ],
 
+    // REVIEWS
+
+    averageRating: {
+      type: Number,
+
+      default: 0,
+    },
+
+    numReviews: {
+      type: Number,
+
+      default: 0,
+    },
+
     featured: {
       type: Boolean,
+
       default: false,
     },
 
     isActive: {
       type: Boolean,
+
       default: true,
     },
 
@@ -110,11 +140,13 @@ const productSchema = new Schema(
     seo: {
       title: {
         type: String,
+
         default: "",
       },
 
       description: {
         type: String,
+
         default: "",
       },
 
@@ -132,6 +164,8 @@ const productSchema = new Schema(
       ref: "User",
     },
 
+    // FUTURE MULTI VENDOR SUPPORT
+
     storeId: {
       type:
         Schema.Types.ObjectId,
@@ -148,6 +182,7 @@ const productSchema = new Schema(
 
 productSchema.index({
   title: "text",
+
   description: "text",
 });
 

@@ -31,5 +31,9 @@ export interface Product {
 
   isActive: boolean;
 
+  averageRating: number;
+
+numReviews: number;
+
   status: "draft" | "published";
 }

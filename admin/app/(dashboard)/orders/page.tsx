@@ -5,10 +5,10 @@ import {
   useState,
 } from "react";
 
-import Image from "next/image";
+import Link from "next/link";
 
 import {
-  getOrders,
+  getAllOrders,
   updateOrderStatus,
 } from "@/services/order.service";
 
@@ -25,10 +25,10 @@ export default function OrdersPage() {
     async () => {
       try {
         const res =
-          await getOrders();
+          await getAllOrders();
 
         setOrders(
-          res.data
+          res.data.data || []
         );
       } catch (error) {
         console.log(error);
@@ -47,12 +47,12 @@ export default function OrdersPage() {
 
   const handleStatusChange =
     async (
-      id: string,
+      orderId: string,
       status: string
     ) => {
       try {
         await updateOrderStatus(
-          id,
+          orderId,
           status
         );
 
@@ -65,7 +65,7 @@ export default function OrdersPage() {
         console.log(error);
 
         toast.error(
-          "Update failed"
+          "Failed to update order"
         );
       }
     };
@@ -73,41 +73,42 @@ export default function OrdersPage() {
   if (loading) {
     return (
       <div>
-        Loading...
+        Loading orders...
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      
+
       <div>
         
         <h1 className="text-3xl font-bold">
           Orders
         </h1>
 
-        <p className="text-zinc-500 mt-1">
-          Manage all orders
+        <p className="text-zinc-500 mt-2">
+          Manage customer orders
         </p>
 
       </div>
 
-      <div className="bg-white border rounded-3xl overflow-hidden">
-        
+      <div className="bg-white rounded-3xl border overflow-hidden">
+
         <div className="overflow-x-auto">
-          
+
           <table className="w-full">
-            
+
             <thead className="bg-zinc-100">
+
               <tr>
-                
+
                 <th className="text-left p-4">
-                  Customer
+                  Order ID
                 </th>
 
                 <th className="text-left p-4">
-                  Products
+                  Customer
                 </th>
 
                 <th className="text-left p-4">
@@ -122,144 +123,144 @@ export default function OrdersPage() {
                   Status
                 </th>
 
+                <th className="text-left p-4">
+                  Date
+                </th>
+
               </tr>
+
             </thead>
 
             <tbody>
-              
-              {orders.map(
-                (order) => (
-                  <tr
-                    key={
-                      order._id
-                    }
-                    className="border-t"
+
+              {orders.length ===
+              0 ? (
+                <tr>
+
+                  <td
+                    colSpan={6}
+                    className="text-center py-10 text-zinc-500"
                   >
-                    
-                    <td className="p-4">
-                      
-                      <div>
-                        
-                        <h3 className="font-semibold">
-                          {
-                            order.user
-                              ?.name
-                          }
-                        </h3>
+                    No orders found
+                  </td>
 
-                        <p className="text-sm text-zinc-500">
-                          {
-                            order.user
-                              ?.email
-                          }
-                        </p>
-
-                      </div>
-
-                    </td>
-
-                    <td className="p-4">
-                      
-                      <div className="flex items-center gap-2">
-                        
-                        {order.items
-                          ?.slice(
-                            0,
-                            3
-                          )
-                          .map(
-                            (
-                              item: any,
-                              index: number
-                            ) => (
-                              <div
-                                key={
-                                  index
-                                }
-                                className="relative w-14 h-14 rounded-xl overflow-hidden border"
-                              >
-                                
-                                <Image
-                                  src={
-                                    item
-                                      .product
-                                      ?.images?.[0]
-                                  }
-                                  alt="Product"
-                                  fill
-                                  className="object-cover"
-                                />
-
-                              </div>
-                            )
-                          )}
-
-                      </div>
-
-                    </td>
-
-                    <td className="p-4 font-semibold">
-                      ₹
-                      {
-                        order.totalPrice
+                </tr>
+              ) : (
+                orders.map(
+                  (order) => (
+                    <tr
+                      key={
+                        order._id
                       }
-                    </td>
+                      className="border-t"
+                    >
 
-                    <td className="p-4">
-                      
-                      <span className="px-3 py-1 rounded-full bg-zinc-100 text-sm">
-                        
+                      <td className="p-4">
+
+                        <Link
+                          href={`/orders/${order._id}`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          {order._id.slice(
+                            0,
+                            12
+                          )}
+                          ...
+                        </Link>
+
+                      </td>
+
+                      <td className="p-4">
+
+                        <div>
+
+                          <p className="font-medium">
+                            {
+                              order.user
+                                ?.name
+                            }
+                          </p>
+
+                          <p className="text-sm text-zinc-500">
+                            {
+                              order.user
+                                ?.email
+                            }
+                          </p>
+
+                        </div>
+
+                      </td>
+
+                      <td className="p-4 font-semibold">
+                        ₹
+                        {
+                          order.totalAmount
+                        }
+                      </td>
+
+                      <td className="p-4">
                         {
                           order.paymentMethod
                         }
+                      </td>
 
-                      </span>
+                      <td className="p-4">
 
-                    </td>
+                        <select
+                          value={
+                            order.orderStatus
+                          }
+                          onChange={(
+                            e
+                          ) =>
+                            handleStatusChange(
+                              order._id,
+                              e.target
+                                .value
+                            )
+                          }
+                          className="border rounded-xl px-3 py-2"
+                        >
 
-                    <td className="p-4">
-                      
-                      <select
-                        value={
-                          order.orderStatus
-                        }
-                        onChange={(
-                          e
-                        ) =>
-                          handleStatusChange(
-                            order._id,
-                            e.target
-                              .value
-                          )
-                        }
-                        className="border rounded-xl px-3 py-2"
-                      >
-                        
-                        <option value="PENDING">
-                          Pending
-                        </option>
+                          <option value="PENDING">
+                            PENDING
+                          </option>
 
-                        <option value="PROCESSING">
-                          Processing
-                        </option>
+                          <option value="CONFIRMED">
+                            CONFIRMED
+                          </option>
 
-                        <option value="SHIPPED">
-                          Shipped
-                        </option>
+                          <option value="PROCESSING">
+                            PROCESSING
+                          </option>
 
-                        <option value="DELIVERED">
-                          Delivered
-                        </option>
+                          <option value="SHIPPED">
+                            SHIPPED
+                          </option>
 
-                        <option value="CANCELLED">
-                          Cancelled
-                        </option>
+                          <option value="DELIVERED">
+                            DELIVERED
+                          </option>
 
-                      </select>
+                          <option value="CANCELLED">
+                            CANCELLED
+                          </option>
 
-                    </td>
+                        </select>
 
-                  </tr>
+                      </td>
+
+                      <td className="p-4 text-sm text-zinc-500">
+
+                        {new Date(
+                          order.createdAt
+                        ).toLocaleDateString()}
+
+                      </td>
+
+                    </tr>
+                  )
                 )
               )}
 

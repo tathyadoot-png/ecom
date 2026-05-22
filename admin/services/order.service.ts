@@ -1,13 +1,22 @@
 import api from "@/lib/axios";
 
-export const getOrders =
+export const getMyOrders =
   async () => {
-    const res =
-      await api.get(
-        "/orders/admin/all"
-      );
+    return api.get("/orders/my");
+  };
 
-    return res.data;
+export const getOrderById =
+  async (id: string) => {
+    return api.get(
+      `/orders/${id}`
+    );
+  };
+
+export const getAllOrders =
+  async () => {
+    return api.get(
+      "/orders/admin/all"
+    );
   };
 
 export const updateOrderStatus =
@@ -15,13 +24,10 @@ export const updateOrderStatus =
     id: string,
     status: string
   ) => {
-    const res =
-      await api.patch(
-        `/orders/admin/${id}/status`,
-        {
-          status,
-        }
-      );
-
-    return res.data;
+    return api.patch(
+      `/orders/admin/${id}/status`,
+      {
+        status,
+      }
+    );
   };

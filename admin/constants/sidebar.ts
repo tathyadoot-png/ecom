@@ -36,4 +36,9 @@ export const SIDEBAR_ITEMS = [
   href: "/categories",
   icon: FolderTree,
 },
+{
+  title: "Reviews",
+  href: "/reviews",
+  icon: FolderTree,
+},
 ];

@@ -13,7 +13,7 @@ import {
 import { useCartStore } from "@/store/cart-store";
 
 import { useAuthStore } from "@/store/auth-store";
-
+import { useEffect, useState } from "react";
 import {
   logoutUser,
 } from "@/services/auth.service";
@@ -21,11 +21,15 @@ import {
 import { toast } from "sonner";
 
 export default function Navbar() {
-  const totalItems =
-    useCartStore(
-      (state) =>
-        state.totalItems
-    );
+const { totalItems } =
+  useCartStore();
+
+const [mounted, setMounted] =
+  useState(false);
+
+useEffect(() => {
+  setMounted(true);
+}, []);
 
   const {
     user,
@@ -117,8 +121,8 @@ export default function Navbar() {
               size={22}
             />
 
-            {totalItems() >
-              0 && (
+           {mounted &&
+  totalItems() > 0 && (
               <div className="absolute -top-2 -right-2 min-w-6 h-6 px-1 rounded-full bg-black text-white text-xs flex items-center justify-center font-semibold">
                 
                 {totalItems()}

@@ -22,7 +22,7 @@ import {
 
 import ProductCard from "@/components/products/product-card";
 
-
+import ReviewSection from "@/components/reviews/review-section";
 
 export default function ProductPage() {
 
@@ -280,6 +280,11 @@ const addItem =
                     </div>
 
                 </div>
+
+
+                <ReviewSection
+  productId={product._id}
+/>
 
                 {/* RELATED PRODUCTS */}
 

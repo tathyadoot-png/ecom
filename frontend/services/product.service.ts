@@ -2,30 +2,62 @@ import api from "@/lib/axios";
 
 export const getProducts =
   async (params?: any) => {
-    const res = await api.get(
+    return api.get(
       "/products",
       {
         params,
       }
     );
-
-    return res.data;
   };
 
 export const getSingleProduct =
   async (slug: string) => {
-    const res = await api.get(
-      `/products/slug/${slug}`
+    return api.get(
+      `/products/${slug}`
     );
-
-    return res.data;
   };
 
 export const getCategories =
   async () => {
-    const res = await api.get(
+    return api.get(
       "/categories"
     );
+  };
 
-    return res.data;
+export const createProduct =
+  async (data: FormData) => {
+    return api.post(
+      "/products",
+      data,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data",
+        },
+      }
+    );
+  };
+
+export const updateProduct =
+  async (
+    id: string,
+    data: FormData
+  ) => {
+    return api.patch(
+      `/products/${id}`,
+      data,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data",
+        },
+      }
+    );
+  };
+
+export const deleteProduct =
+  async (id: string) => {
+    return api.delete(
+      `/products/${id}`
+    );
   };

@@ -12,7 +12,18 @@ import productRoutes from "./modules/products/product.routes";
 import categoryRoutes from "./modules/products/category.routes";
 import orderRoutes from "./modules/orders/order.routes";
 import paymentRoutes from "./modules/orders/payment.routes";
+
+import reviewRoutes from "./modules/reviews/review.routes";
+
+
+
+
+
+
 const app = express();
+
+
+
 
 app.use(
   cors({
@@ -52,6 +63,11 @@ app.use(
 app.use(
   "/api/payments",
   paymentRoutes
+);
+
+app.use(
+  "/api/reviews",
+  reviewRoutes
 );
 
 
