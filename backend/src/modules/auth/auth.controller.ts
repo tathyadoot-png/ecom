@@ -15,6 +15,10 @@ import {
 import { asyncHandler } from "../../utils/asyncHandler";
 
 import { successResponse } from "../../utils/response";
+import {
+  updateProfileService,
+  changePasswordService,
+} from "./profile.service";
 
 export const register = asyncHandler(
   async (
@@ -107,3 +111,65 @@ export const logout = asyncHandler(
     );
   }
 );
+
+
+export const updateProfile =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+      let avatar = "";
+
+      if (
+        req.file
+      ) {
+        avatar =
+          (
+            req.file as any
+          ).path;
+      }
+
+      const user =
+        await updateProfileService(
+          req.user._id,
+         {
+  ...req.body,
+
+  avatar:
+    avatar ||
+    req.user.avatar,
+}
+        );
+
+      return successResponse(
+        res,
+        "Profile updated successfully",
+        user
+      );
+    }
+  );
+
+export const changePassword =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+      const {
+        currentPassword,
+        newPassword,
+      } = req.body;
+
+      await changePasswordService(
+        req.user._id,
+        currentPassword,
+        newPassword
+      );
+
+      return successResponse(
+        res,
+        "Password changed successfully"
+      );
+    }
+  );

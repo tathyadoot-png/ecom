@@ -51,13 +51,17 @@ export default function LoginPage() {
           formData.password
         );
 
-      setUser(res.data);
+setUser(
+  res.data.data
+);
+
 
       toast.success(
         "Login successful"
       );
 
-      router.push("/");
+   window.location.href =
+  "/";
     } catch (error: any) {
       toast.error(
         error?.response?.data

@@ -63,13 +63,11 @@ const addItem =
                             params.slug as string
                         );
 
-                    setProduct(
-                        res.data
-                    );
+                 setProduct(res);
 
-                    setSelectedImage(
-                        res.data.images?.[0]
-                    );
+setSelectedImage(
+  res.images?.[0]
+);
 
                     // Related Products
                     const related =

@@ -12,9 +12,11 @@ export const getProducts =
 
 export const getSingleProduct =
   async (slug: string) => {
-    return api.get(
-      `/products/${slug}`
+    const res = await api.get(
+      `/products/slug/${slug}`
     );
+
+    return res.data.data;
   };
 
 export const getCategories =

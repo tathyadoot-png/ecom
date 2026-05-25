@@ -1,16 +1,13 @@
 import { create } from "zustand";
 
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-}
+import { User } from "@/types/auth.types";
 
 interface AuthState {
   user: User | null;
 
   loading: boolean;
+
+  hydrated: boolean;
 
   setUser: (
     user: User | null
@@ -18,6 +15,10 @@ interface AuthState {
 
   setLoading: (
     loading: boolean
+  ) => void;
+
+  setHydrated: (
+    hydrated: boolean
   ) => void;
 
   logout: () => void;
@@ -29,11 +30,22 @@ export const useAuthStore =
 
     loading: true,
 
-    setUser: (user) =>
+    hydrated: false,
+
+    setUser: (
+      user: User | null
+    ) =>
       set({ user }),
 
-    setLoading: (loading) =>
+    setLoading: (
+      loading
+    ) =>
       set({ loading }),
+
+    setHydrated: (
+      hydrated
+    ) =>
+      set({ hydrated }),
 
     logout: () =>
       set({

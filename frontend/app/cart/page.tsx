@@ -12,8 +12,11 @@ import {
 } from "lucide-react";
 
 import { useCartStore } from "@/store/cart-store";
+import { useAuthStore } from "@/store/auth-store";
 
 export default function CartPage() {
+  const { user } =
+  useAuthStore();
   const {
     items,
     removeItem,
@@ -22,6 +25,34 @@ export default function CartPage() {
     totalItems,
     totalPrice,
   } = useCartStore();
+
+
+if (!user) {
+  return (
+    <div className="min-h-screen bg-zinc-50 flex items-center justify-center px-4">
+
+      <div className="bg-white border rounded-3xl p-10 text-center max-w-md w-full">
+
+        <h1 className="text-3xl font-bold">
+          Login Required
+        </h1>
+
+        <p className="text-zinc-500 mt-3">
+          Please login to access your cart
+        </p>
+
+        <Link
+          href="/login"
+          className="mt-8 inline-flex h-14 px-8 rounded-2xl bg-black text-white items-center justify-center font-semibold"
+        >
+          Login
+        </Link>
+
+      </div>
+
+    </div>
+  );
+}
 
   if (items.length === 0) {
     return (

@@ -14,7 +14,7 @@ import orderRoutes from "./modules/orders/order.routes";
 import paymentRoutes from "./modules/orders/payment.routes";
 
 import reviewRoutes from "./modules/reviews/review.routes";
-
+import wishlistRoutes from "./modules/wishlist/wishlist.routes";
 
 
 
@@ -70,5 +70,9 @@ app.use(
   reviewRoutes
 );
 
+app.use(
+  "/api/wishlist",
+  wishlistRoutes
+);
 
 export default app;

@@ -11,10 +11,11 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const {
-    setUser,
-    setLoading,
-  } = useAuthStore();
+const {
+  setUser,
+  setLoading,
+  setHydrated,
+} = useAuthStore();
 
   useEffect(() => {
     const fetchUser =
@@ -25,14 +26,16 @@ export default function AuthProvider({
               "/auth/me"
             );
 
-          setUser(
-            res.data.user
-          );
+setUser(
+  res.data.data
+);
         } catch {
           setUser(null);
-        } finally {
-          setLoading(false);
-        }
+        }finally {
+  setLoading(false);
+
+  setHydrated(true);
+}
       };
 
     fetchUser();
