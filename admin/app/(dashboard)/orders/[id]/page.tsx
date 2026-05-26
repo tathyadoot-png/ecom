@@ -173,7 +173,7 @@ export default function OrderDetailsPage() {
                 (item: any) => (
                   <div
                     key={
-                      item._id
+                     item.product._id
                     }
                     className="flex gap-4 border rounded-2xl p-4"
                   >

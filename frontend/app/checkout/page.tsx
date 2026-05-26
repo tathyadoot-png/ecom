@@ -1,23 +1,28 @@
 "use client";
 
-
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-import { useAuthStore } from "@/store/auth-store";
-
 import Link from "next/link";
 
+import Image from "next/image";
+
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
 
-import Image from "next/image";
-
-import { useCartStore } from "@/store/cart-store";
+import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
+
+import {
+  CreditCard,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
+
+import { useAuthStore } from "@/store/auth-store";
+
+import { useCartStore } from "@/store/cart-store";
 
 import { createOrder } from "@/services/order.service";
 
@@ -26,15 +31,9 @@ import {
   verifyPayment,
 } from "@/services/payment.service";
 
-import {
-  CreditCard,
-  Truck,
-  ShieldCheck,
-} from "lucide-react";
-
 export default function CheckoutPage() {
-
-  const router = useRouter();
+  const router =
+    useRouter();
 
   const {
     user,
@@ -44,7 +43,7 @@ export default function CheckoutPage() {
   const {
     items,
     totalPrice,
-    clearCart,
+    clearItems,
   } = useCartStore();
 
   const [loading, setLoading] =
@@ -53,7 +52,9 @@ export default function CheckoutPage() {
   const [
     paymentMethod,
     setPaymentMethod,
-  ] = useState("RAZORPAY");
+  ] = useState<
+    "COD" | "RAZORPAY"
+  >("RAZORPAY");
 
   const shipping =
     useMemo(() => {
@@ -61,7 +62,7 @@ export default function CheckoutPage() {
         999
         ? 0
         : 99;
-    }, [items]);
+    }, [items, totalPrice]);
 
   const finalTotal =
     totalPrice() + shipping;
@@ -72,7 +73,7 @@ export default function CheckoutPage() {
       !user
     ) {
       toast.error(
-        "Please login to continue checkout"
+        "Please login first"
       );
 
       router.push("/login");
@@ -149,6 +150,8 @@ export default function CheckoutPage() {
           paymentMethod,
         };
 
+        // CREATE ORDER
+
         const orderRes =
           await createOrder(
             orderData
@@ -157,25 +160,25 @@ export default function CheckoutPage() {
         const order =
           orderRes.data;
 
+        // COD FLOW
 
-          if (
-  paymentMethod ===
-  "COD"
-) {
-  toast.success(
-    "Order placed successfully"
-  );
+        if (
+          paymentMethod ===
+          "COD"
+        ) {
+          toast.success(
+            "Order placed successfully"
+          );
 
-  clearCart();
+          await clearItems();
 
-  window.location.href =
-    `/order-success?orderId=${order._id}`;
+          window.location.href =
+            `/order-success?orderId=${order._id}`;
 
-  return;
-}
+          return;
+        }
 
-
-
+        // CREATE RAZORPAY ORDER
 
         const razorpayRes =
           await createRazorpayOrder(
@@ -183,7 +186,20 @@ export default function CheckoutPage() {
           );
 
         const razorpayOrder =
-          razorpayRes.data;
+          razorpayRes.data.data;
+
+        // SAFETY CHECK
+
+        if (
+          !(window as any)
+            .Razorpay
+        ) {
+          toast.error(
+            "Razorpay SDK failed to load"
+          );
+
+          return;
+        }
 
         const options = {
           key:
@@ -210,30 +226,35 @@ export default function CheckoutPage() {
               response: any
             ) {
               try {
-                await verifyPayment({
-                  razorpay_order_id:
-                    response.razorpay_order_id,
+                await verifyPayment(
+                  {
+                    razorpay_order_id:
+                      response.razorpay_order_id,
 
-                  razorpay_payment_id:
-                    response.razorpay_payment_id,
+                    razorpay_payment_id:
+                      response.razorpay_payment_id,
 
-                  razorpay_signature:
-                    response.razorpay_signature,
+                    razorpay_signature:
+                      response.razorpay_signature,
 
-                  orderId:
-                    order._id,
-                });
+                    orderId:
+                      order._id,
+                  }
+                );
 
                 toast.success(
                   "Payment successful"
                 );
 
-                clearCart();
+                await clearItems();
 
                 window.location.href =
                   `/order-success?orderId=${order._id}`;
+
               } catch (error) {
-                console.log(error);
+                console.log(
+                  error
+                );
 
                 toast.error(
                   "Payment verification failed"
@@ -242,7 +263,8 @@ export default function CheckoutPage() {
             },
 
           theme: {
-            color: "#000000",
+            color:
+              "#000000",
           },
         };
 
@@ -259,12 +281,14 @@ export default function CheckoutPage() {
         toast.error(
           error?.response?.data
             ?.message ||
-          "Failed to place order"
+            "Failed to place order"
         );
       } finally {
         setLoading(false);
       }
     };
+
+  // LOADING
 
   if (authLoading) {
     return (
@@ -274,9 +298,13 @@ export default function CheckoutPage() {
     );
   }
 
+  // NO USER
+
   if (!user) {
     return null;
   }
+
+  // EMPTY CART
 
   if (items.length === 0) {
     return (
@@ -310,6 +338,8 @@ export default function CheckoutPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-10">
 
+        {/* HEADER */}
+
         <div className="mb-10">
 
           <h1 className="text-4xl font-bold">
@@ -330,7 +360,7 @@ export default function CheckoutPage() {
             onSubmit={
               handleCheckout
             }
-            className="lg:col-span-2 bg-white border rounded-3xl p-8 space-y-8"
+            className="lg:col-span-2 bg-white border rounded-3xl p-8 space-y-10"
           >
 
             {/* SHIPPING */}
@@ -343,6 +373,10 @@ export default function CheckoutPage() {
                   Shipping Address
                 </h2>
 
+                <p className="text-zinc-500 mt-1">
+                  Enter your delivery details
+                </p>
+
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -352,6 +386,12 @@ export default function CheckoutPage() {
                   name="firstName"
                   placeholder="First Name"
                   required
+                  defaultValue={
+                    user?.address?.fullName
+                      ?.split(
+                        " "
+                      )[0] || ""
+                  }
                   className="h-14 px-4 rounded-2xl border"
                 />
 
@@ -360,6 +400,16 @@ export default function CheckoutPage() {
                   name="lastName"
                   placeholder="Last Name"
                   required
+                  defaultValue={
+                    user?.address?.fullName
+                      ?.split(
+                        " "
+                      )
+                      ?.slice(1)
+                      ?.join(
+                        " "
+                      ) || ""
+                  }
                   className="h-14 px-4 rounded-2xl border"
                 />
 
@@ -370,6 +420,9 @@ export default function CheckoutPage() {
                 name="email"
                 placeholder="Email Address"
                 required
+                defaultValue={
+                  user?.email || ""
+                }
                 className="w-full h-14 px-4 rounded-2xl border"
               />
 
@@ -378,6 +431,10 @@ export default function CheckoutPage() {
                 name="phone"
                 placeholder="Phone Number"
                 required
+                defaultValue={
+                  user?.address
+                    ?.phone || ""
+                }
                 className="w-full h-14 px-4 rounded-2xl border"
               />
 
@@ -386,6 +443,10 @@ export default function CheckoutPage() {
                 placeholder="Full Address"
                 required
                 rows={5}
+                defaultValue={
+                  user?.address
+                    ?.address || ""
+                }
                 className="w-full p-4 rounded-2xl border"
               />
 
@@ -396,6 +457,10 @@ export default function CheckoutPage() {
                   name="city"
                   placeholder="City"
                   required
+                  defaultValue={
+                    user?.address
+                      ?.city || ""
+                  }
                   className="h-14 px-4 rounded-2xl border"
                 />
 
@@ -404,6 +469,10 @@ export default function CheckoutPage() {
                   name="state"
                   placeholder="State"
                   required
+                  defaultValue={
+                    user?.address
+                      ?.state || ""
+                  }
                   className="h-14 px-4 rounded-2xl border"
                 />
 
@@ -412,14 +481,17 @@ export default function CheckoutPage() {
                   name="postalCode"
                   placeholder="Pincode"
                   required
+                  defaultValue={
+                    user?.address
+                      ?.postalCode ||
+                    ""
+                  }
                   className="h-14 px-4 rounded-2xl border"
                 />
 
               </div>
 
             </div>
-
-
 
             {/* PAYMENT */}
 
@@ -446,11 +518,12 @@ export default function CheckoutPage() {
                     "RAZORPAY"
                   )
                 }
-                className={`w-full rounded-3xl border-2 p-5 transition-all text-left ${paymentMethod ===
-                    "RAZORPAY"
+                className={`w-full rounded-3xl border-2 p-5 transition-all text-left ${
+                  paymentMethod ===
+                  "RAZORPAY"
                     ? "border-black bg-zinc-50"
                     : "border-zinc-200"
-                  }`}
+                }`}
               >
 
                 <div className="flex items-start justify-between gap-4">
@@ -458,7 +531,9 @@ export default function CheckoutPage() {
                   <div className="flex gap-4">
 
                     <div className="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center">
-                      <CreditCard size={24} />
+                      <CreditCard
+                        size={24}
+                      />
                     </div>
 
                     <div>
@@ -479,32 +554,17 @@ export default function CheckoutPage() {
                         UPI • Cards • Wallets • Net Banking
                       </p>
 
-                      <div className="flex gap-2 mt-3">
-
-                        <span className="text-xs border rounded-full px-2 py-1">
-                          UPI
-                        </span>
-
-                        <span className="text-xs border rounded-full px-2 py-1">
-                          VISA
-                        </span>
-
-                        <span className="text-xs border rounded-full px-2 py-1">
-                          Mastercard
-                        </span>
-
-                      </div>
-
                     </div>
 
                   </div>
 
                   <div
-                    className={`w-5 h-5 rounded-full border-2 mt-1 ${paymentMethod ===
-                        "RAZORPAY"
+                    className={`w-5 h-5 rounded-full border-2 mt-1 ${
+                      paymentMethod ===
+                      "RAZORPAY"
                         ? "border-black bg-black"
                         : "border-zinc-300"
-                      }`}
+                    }`}
                   />
 
                 </div>
@@ -520,11 +580,12 @@ export default function CheckoutPage() {
                     "COD"
                   )
                 }
-                className={`w-full rounded-3xl border-2 p-5 transition-all text-left ${paymentMethod ===
-                    "COD"
+                className={`w-full rounded-3xl border-2 p-5 transition-all text-left ${
+                  paymentMethod ===
+                  "COD"
                     ? "border-black bg-zinc-50"
                     : "border-zinc-200"
-                  }`}
+                }`}
               >
 
                 <div className="flex items-start justify-between gap-4">
@@ -532,7 +593,9 @@ export default function CheckoutPage() {
                   <div className="flex gap-4">
 
                     <div className="w-14 h-14 rounded-2xl bg-zinc-100 flex items-center justify-center">
-                      <Truck size={24} />
+                      <Truck
+                        size={24}
+                      />
                     </div>
 
                     <div>
@@ -550,11 +613,12 @@ export default function CheckoutPage() {
                   </div>
 
                   <div
-                    className={`w-5 h-5 rounded-full border-2 mt-1 ${paymentMethod ===
-                        "COD"
+                    className={`w-5 h-5 rounded-full border-2 mt-1 ${
+                      paymentMethod ===
+                      "COD"
                         ? "border-black bg-black"
                         : "border-zinc-300"
-                      }`}
+                    }`}
                   />
 
                 </div>
@@ -563,26 +627,29 @@ export default function CheckoutPage() {
 
             </div>
 
-         <button
-  type="submit"
-  disabled={loading}
-  className="w-full h-16 rounded-3xl bg-black text-white text-lg font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-3"
->
+            {/* PLACE ORDER */}
 
-  <ShieldCheck size={22} />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-16 rounded-3xl bg-black text-white text-lg font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+            >
 
-  {loading
-    ? paymentMethod ===
-      "COD"
-      ? "Placing Order..."
-      : "Opening Payment..."
+              <ShieldCheck
+                size={22}
+              />
 
-    : paymentMethod ===
-      "COD"
-    ? `Place Order • ₹${finalTotal}`
-    : `Pay Securely • ₹${finalTotal}`}
+              {loading
+                ? paymentMethod ===
+                  "COD"
+                  ? "Placing Order..."
+                  : "Opening Payment..."
+                : paymentMethod ===
+                  "COD"
+                ? `Place Order • ₹${finalTotal}`
+                : `Pay Securely • ₹${finalTotal}`}
 
-</button>
+            </button>
 
           </form>
 
@@ -602,61 +669,64 @@ export default function CheckoutPage() {
 
             <div className="space-y-5">
 
-              {items.map((item) => (
-                <div
-                  key={
-                    item.product
-                      ._id
-                  }
-                  className="flex gap-4"
-                >
+              {items.map(
+                (item) => (
+                  <div
+                    key={
+                      item.product
+                        ._id
+                    }
+                    className="flex gap-4"
+                  >
 
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden border">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden border">
 
-                    <Image
-                      src={
-                        item.product
-                          .images?.[0]
-                      }
-                      alt={
-                        item.product
-                          .title
-                      }
-                      fill
-                      className="object-cover"
-                    />
+                      <Image
+                        src={
+                          item.product
+                            .images?.[0]
+                        }
+                        alt={
+                          item.product
+                            .title
+                        }
+                        fill
+                        className="object-cover"
+                      />
+
+                    </div>
+
+                    <div className="flex-1">
+
+                      <h3 className="font-semibold line-clamp-1">
+                        {
+                          item.product
+                            .title
+                        }
+                      </h3>
+
+                      <p className="text-sm text-zinc-500">
+                        Qty:
+                        {" "}
+                        {
+                          item.quantity
+                        }
+                      </p>
+
+                      <p className="font-bold mt-1">
+                        ₹
+                        {(item.product
+                          .salePrice ||
+                          item.product
+                            .price) *
+                          item.quantity}
+                      </p>
+
+                    </div>
 
                   </div>
-
-                  <div className="flex-1">
-
-                    <h3 className="font-semibold">
-                      {
-                        item.product
-                          .title
-                      }
-                    </h3>
-
-                    <p className="text-sm text-zinc-500">
-                      Qty:{" "}
-                      {
-                        item.quantity
-                      }
-                    </p>
-
-                    <p className="font-bold mt-1">
-                      ₹
-                      {(item.product
-                        .salePrice ||
-                        item.product
-                          .price) *
-                        item.quantity}
-                    </p>
-
-                  </div>
-
-                </div>
-              ))}
+                )
+              )}
 
             </div>
 
@@ -691,7 +761,7 @@ export default function CheckoutPage() {
 
               </div>
 
-              <div className="border-t pt-4 flex items-center justify-between text-lg font-bold">
+              <div className="border-t pt-4 flex items-center justify-between text-xl font-bold">
 
                 <span>Total</span>
 

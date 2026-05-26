@@ -264,7 +264,7 @@ setSelectedImage(
 
                        <button
   onClick={() => {
-    addItem(product);
+  addItem(product._id)
 
     toast.success(
       "Added to cart"

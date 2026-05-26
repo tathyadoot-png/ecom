@@ -13,9 +13,19 @@ import {
   useParams,
 } from "next/navigation";
 
+import {
+  ArrowLeft,
+  CreditCard,
+  MapPin,
+  Package,
+  Truck,
+} from "lucide-react";
+
 import { toast } from "sonner";
 
-import { getSingleOrder } from "@/services/order.service";
+import {
+  getSingleOrder,
+} from "@/services/order.service";
 
 export default function OrderDetailsPage() {
   const params =
@@ -35,7 +45,10 @@ export default function OrderDetailsPage() {
             params.id as string
           );
 
-        setOrder(res.data);
+        setOrder(
+          res.data
+        );
+
       } catch (error: any) {
         console.log(error);
 
@@ -44,6 +57,7 @@ export default function OrderDetailsPage() {
             ?.message ||
             "Failed to fetch order"
         );
+
       } finally {
         setLoading(false);
       }
@@ -52,6 +66,32 @@ export default function OrderDetailsPage() {
   useEffect(() => {
     fetchOrder();
   }, []);
+
+  // STATUS COLOR
+
+  const getStatusStyles =
+    (status: string) => {
+      switch (status) {
+
+        case "DELIVERED":
+          return "bg-green-100 text-green-700";
+
+        case "PROCESSING":
+          return "bg-blue-100 text-blue-700";
+
+        case "SHIPPED":
+          return "bg-purple-100 text-purple-700";
+
+        case "CANCELLED":
+          return "bg-red-100 text-red-700";
+
+        case "CONFIRMED":
+          return "bg-emerald-100 text-emerald-700";
+
+        default:
+          return "bg-yellow-100 text-yellow-700";
+      }
+    };
 
   if (loading) {
     return (
@@ -71,65 +111,130 @@ export default function OrderDetailsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      
+
       <div className="max-w-7xl mx-auto px-4 py-10">
-        
+
+        {/* BACK */}
+
+        <Link
+          href="/orders"
+          className="inline-flex items-center gap-2 text-sm font-medium mb-8 hover:underline"
+        >
+
+          <ArrowLeft
+            size={18}
+          />
+
+          Back To Orders
+
+        </Link>
+
         {/* HEADER */}
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
-          
-          <div>
-            
-            <h1 className="text-4xl font-bold">
-              Order Details
-            </h1>
+        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 mb-10">
 
-            <p className="text-zinc-500 mt-2">
-              Order ID:{" "}
+          <div>
+
+            <div className="flex flex-wrap items-center gap-3">
+
+              <h1 className="text-4xl font-bold">
+                Order Details
+              </h1>
+
+              <span
+                className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusStyles(
+                  order.orderStatus
+                )}`}
+              >
+                {
+                  order.orderStatus
+                }
+              </span>
+
+            </div>
+
+            <p className="text-zinc-500 mt-3 break-all">
+              Order ID:
+              {" "}
               {order._id}
+            </p>
+
+            <p className="text-zinc-500 mt-1">
+              Placed on{" "}
+              {new Date(
+                order.createdAt
+              ).toLocaleDateString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month:
+                    "long",
+                  year:
+                    "numeric",
+                }
+              )}
             </p>
 
           </div>
 
-          <div>
-            
-            <span className="px-5 py-2 rounded-full bg-yellow-100 text-yellow-700 font-semibold">
+          {/* TOTAL */}
+
+          <div className="bg-white border rounded-3xl px-8 py-6">
+
+            <p className="text-zinc-500 text-sm">
+              Total Amount
+            </p>
+
+            <h2 className="text-3xl font-bold mt-2">
+              ₹
               {
-                order.orderStatus
+                order.totalAmount
               }
-            </span>
+            </h2>
 
           </div>
 
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          
+
           {/* LEFT */}
 
           <div className="lg:col-span-2 space-y-8">
-            
+
             {/* PRODUCTS */}
 
             <div className="bg-white border rounded-3xl p-8">
-              
-              <h2 className="text-2xl font-bold mb-8">
-                Ordered Products
-              </h2>
+
+              <div className="flex items-center gap-3 mb-8">
+
+                <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center">
+
+                  <Package
+                    size={22}
+                  />
+
+                </div>
+
+                <h2 className="text-2xl font-bold">
+                  Ordered Products
+                </h2>
+
+              </div>
 
               <div className="space-y-6">
-                
+
                 {order.items.map(
                   (item: any) => (
                     <div
                       key={
                         item.product
                       }
-                      className="flex gap-5 border-b pb-6"
+                      className="flex gap-5 border-b last:border-none pb-6 last:pb-0"
                     >
-                      
-                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden border">
-                        
+
+                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden border bg-zinc-100">
+
                         <Image
                           src={
                             item.image
@@ -143,13 +248,13 @@ export default function OrderDetailsPage() {
 
                       </div>
 
-                      <div className="flex-1">
-                        
+                      <div className="flex-1 min-w-0">
+
                         <Link
                           href={`/products/${item.slug}`}
                         >
-                          
-                          <h3 className="text-lg font-semibold hover:underline">
+
+                          <h3 className="text-lg font-semibold hover:underline line-clamp-1">
                             {
                               item.title
                             }
@@ -158,13 +263,14 @@ export default function OrderDetailsPage() {
                         </Link>
 
                         <p className="text-zinc-500 mt-2">
-                          Quantity:{" "}
+                          Quantity:
+                          {" "}
                           {
                             item.quantity
                           }
                         </p>
 
-                        <p className="font-bold mt-2">
+                        <p className="font-bold mt-2 text-lg">
                           ₹
                           {
                             item.price
@@ -184,14 +290,26 @@ export default function OrderDetailsPage() {
             {/* SHIPPING */}
 
             <div className="bg-white border rounded-3xl p-8">
-              
-              <h2 className="text-2xl font-bold mb-6">
-                Shipping Address
-              </h2>
+
+              <div className="flex items-center gap-3 mb-8">
+
+                <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center">
+
+                  <MapPin
+                    size={22}
+                  />
+
+                </div>
+
+                <h2 className="text-2xl font-bold">
+                  Shipping Address
+                </h2>
+
+              </div>
 
               <div className="space-y-3 text-zinc-700">
-                
-                <p>
+
+                <p className="font-semibold text-black text-lg">
                   {
                     order
                       .shippingAddress
@@ -221,7 +339,8 @@ export default function OrderDetailsPage() {
                       .shippingAddress
                       .city
                   }
-                  ,{" "}
+                  ,
+                  {" "}
                   {
                     order
                       .shippingAddress
@@ -254,24 +373,36 @@ export default function OrderDetailsPage() {
           {/* RIGHT */}
 
           <div className="space-y-8">
-            
+
             {/* SUMMARY */}
 
             <div className="bg-white border rounded-3xl p-8">
-              
-              <h2 className="text-2xl font-bold mb-6">
-                Order Summary
-              </h2>
 
-              <div className="space-y-4">
-                
+              <div className="flex items-center gap-3 mb-8">
+
+                <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center">
+
+                  <Truck
+                    size={22}
+                  />
+
+                </div>
+
+                <h2 className="text-2xl font-bold">
+                  Order Summary
+                </h2>
+
+              </div>
+
+              <div className="space-y-5">
+
                 <div className="flex items-center justify-between">
-                  
+
                   <span className="text-zinc-500">
                     Subtotal
                   </span>
 
-                  <span>
+                  <span className="font-medium">
                     ₹
                     {
                       order.subtotal
@@ -281,22 +412,22 @@ export default function OrderDetailsPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  
+
                   <span className="text-zinc-500">
                     Shipping
                   </span>
 
-                  <span>
-                    ₹
-                    {
-                      order.shippingFee
-                    }
+                  <span className="font-medium">
+                    {order.shippingFee ===
+                    0
+                      ? "Free"
+                      : `₹${order.shippingFee}`}
                   </span>
 
                 </div>
 
-                <div className="border-t pt-4 flex items-center justify-between text-lg font-bold">
-                  
+                <div className="border-t pt-5 flex items-center justify-between text-xl font-bold">
+
                   <span>
                     Total
                   </span>
@@ -317,20 +448,32 @@ export default function OrderDetailsPage() {
             {/* PAYMENT */}
 
             <div className="bg-white border rounded-3xl p-8">
-              
-              <h2 className="text-2xl font-bold mb-6">
-                Payment
-              </h2>
 
-              <div className="space-y-4">
-                
+              <div className="flex items-center gap-3 mb-8">
+
+                <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center">
+
+                  <CreditCard
+                    size={22}
+                  />
+
+                </div>
+
+                <h2 className="text-2xl font-bold">
+                  Payment
+                </h2>
+
+              </div>
+
+              <div className="space-y-5">
+
                 <div className="flex items-center justify-between">
-                  
+
                   <span className="text-zinc-500">
                     Method
                   </span>
 
-                  <span>
+                  <span className="font-semibold">
                     {
                       order.paymentMethod
                     }
@@ -339,12 +482,19 @@ export default function OrderDetailsPage() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  
+
                   <span className="text-zinc-500">
-                    Status
+                    Payment Status
                   </span>
 
-                  <span className="font-semibold text-yellow-600">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      order.paymentStatus ===
+                      "PAID"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
                     {
                       order.paymentStatus
                     }

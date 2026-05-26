@@ -197,9 +197,9 @@ if (!user) {
                       <button
                         onClick={() =>
                           decreaseQuantity(
-                            item.product
-                              ._id
-                          )
+  item.product._id,
+  item.quantity
+)
                         }
                         className="w-11 h-11 rounded-xl border bg-white flex items-center justify-center"
                       >
@@ -215,9 +215,9 @@ if (!user) {
                       <button
                         onClick={() =>
                           increaseQuantity(
-                            item.product
-                              ._id
-                          )
+  item.product._id,
+  item.quantity
+)
                         }
                         className="w-11 h-11 rounded-xl border bg-white flex items-center justify-center"
                       >

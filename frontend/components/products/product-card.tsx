@@ -32,7 +32,8 @@ export default function ProductCard({
   const router =
     useRouter();
 
-  const handleAddToCart = (
+ const handleAddToCart =
+  async (
     e: React.MouseEvent
   ) => {
     e.preventDefault();
@@ -49,13 +50,20 @@ export default function ProductCard({
       return;
     }
 
-    addItem(product);
+    try {
+      await addItem(
+        product._id
+      );
 
-    toast.success(
-      "Added to cart"
-    );
+      toast.success(
+        "Added to cart"
+      );
+    } catch (error) {
+      toast.error(
+        "Failed to add cart"
+      );
+    }
   };
-
   return (
     <Link
       href={`/products/${product.slug}`}

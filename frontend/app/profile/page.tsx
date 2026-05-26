@@ -43,7 +43,8 @@ export default function ProfilePage() {
     useState({
       name: "",
 
-      avatar: "",
+      avatarFile:
+  null as File | null,
 
       fullName: "",
 
@@ -75,8 +76,7 @@ export default function ProfilePage() {
         name:
           user.name || "",
 
-        avatar:
-          user.avatar || "",
+      avatarFile: null,
 
         fullName:
           user.address
@@ -261,13 +261,13 @@ const handleUpdate =
                 <Image
   unoptimized
   src={
-    form.avatar ||
+    user?.avatar ||
     `https://ui-avatars.com/api/?name=${form.name}`
   }
-                  alt="profile"
-                  fill
-                  className="object-cover"
-                />
+  alt="profile"
+  fill
+  className="object-cover"
+/>
 
               </div>
 
@@ -332,24 +332,19 @@ const handleUpdate =
                   className="w-full h-14 px-4 rounded-2xl border"
                 />
 
-                <input
-                  type="text"
-                  placeholder="Avatar URL"
-                  value={
-                    form.avatar
-                  }
-                  onChange={(
-                    e
-                  ) =>
-                    setForm({
-                      ...form,
-                      avatar:
-                        e.target
-                          .value,
-                    })
-                  }
-                  className="w-full h-14 px-4 rounded-2xl border"
-                />
+              
+<input
+  type="file"
+  accept="image/*"
+  onChange={(e) =>
+    setForm({
+      ...form,
+      avatarFile:
+        e.target.files?.[0] || null,
+    })
+  }
+/>
+
 
                 <button
                   onClick={

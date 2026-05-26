@@ -10,7 +10,7 @@ import { successResponse } from "../../utils/response";
 
 import { AuthRequest } from "../../middlewares/auth.middleware";
 
-import { Order } from "./order.model";
+import { Order, OrderStatus } from "./order.model";
 
 import { ApiError } from "../../utils/ApiError";
 
@@ -119,8 +119,8 @@ export const verifyRazorpayPayment =
       order.razorpaySignature =
         razorpay_signature;
 
-      order.orderStatus =
-        "CONFIRMED";
+order.orderStatus =
+  OrderStatus.CONFIRMED;
 
       await order.save();
 

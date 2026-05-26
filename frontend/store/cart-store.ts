@@ -1,224 +1,224 @@
 import { create } from "zustand";
 
-import { persist } from "zustand/middleware";
-
 import { Product } from "@/types/product.types";
 
-import { CartItem } from "@/types/cart.types";
+import {
+  addToCart,
+  clearCart as clearCartApi,
+  getCart,
+  removeCartItem,
+  updateCartItem,
+} from "@/services/cart.service";
+
+interface CartItem {
+  product: Product;
+
+  quantity: number;
+}
 
 interface CartState {
-    items: CartItem[];
+  items: CartItem[];
 
-    addItem: (
-        product: Product
-    ) => void;
+  loading: boolean;
 
-    removeItem: (
-        productId: string
-    ) => void;
+  fetchCart: () => Promise<void>;
 
-    increaseQuantity: (
-        productId: string
-    ) => void;
+  addItem: (
+    productId: string
+  ) => Promise<void>;
 
-    decreaseQuantity: (
-        productId: string
-    ) => void;
+  removeItem: (
+    productId: string
+  ) => Promise<void>;
 
-    clearCart: () => void;
+  updateQuantity: (
+    productId: string,
+    quantity: number
+  ) => Promise<void>;
 
-    totalItems: () => number;
+  increaseQuantity: (
+    productId: string,
+    currentQty: number
+  ) => Promise<void>;
 
-    totalPrice: () => number;
+  decreaseQuantity: (
+    productId: string,
+    currentQty: number
+  ) => Promise<void>;
+
+  // clearCart: () => Promise<void>;
+
+  totalItems: () => number;
+
+  totalPrice: () => number;
+  clearItems: () => Promise<void>;
 }
 
 export const useCartStore =
-    create<CartState>()(
-        persist(
-            (set, get) => ({
-                items: [],
+  create<CartState>(
+    (set, get) => ({
+      items: [],
 
-                addItem: (
-                    product
-                ) => {
-                    const items =
-                        get().items;
+      loading: false,
 
-                    const existingItem =
-                        items.find(
-                            (item) =>
-                                item.product
-                                    ._id ===
-                                product._id
-                        );
+      fetchCart:
+        async () => {
+          try {
+            set({
+              loading: true,
+            });
 
-                    if (
-                        existingItem
-                    ) {
-                        set({
-                            items:
-                                items.map(
-                                    (
-                                        item
-                                    ) =>
-                                        item.product
-                                            ._id ===
-                                            product._id
-                                            ? {
-                                                ...item,
-                                                quantity:
-                                                    item.quantity +
-                                                    1,
-                                            }
-                                            : item
-                                ),
-                        });
-                    } else {
-                        set({
-                            items: [
-                                ...items,
-                                {
-                                    product,
-                                    quantity: 1,
-                                },
-                            ],
-                        });
-                    }
-                },
+            const res =
+              await getCart();
 
-                removeItem: (
-                    productId
-                ) => {
-                    set({
-                        items:
-                            get().items.filter(
-                                (
-                                    item
-                                ) =>
-                                    item.product
-                                        ._id !==
-                                    productId
-                            ),
-                    });
-                },
+            set({
+              items:
+                res.data.data
+                  .items || [],
+            });
+          } catch (
+            error
+          ) {
+            console.log(
+              error
+            );
+          } finally {
+            set({
+              loading: false,
+            });
+          }
+        },
 
-                increaseQuantity:
-                    (
-                        productId
-                    ) => {
-                        set({
-                            items:
-                                get().items.map(
-                                    (
-                                        item
-                                    ) =>
-                                        item.product
-                                            ._id ===
-                                            productId
-                                            ? {
-                                                ...item,
-                                                quantity:
-                                                    item.quantity +
-                                                    1,
-                                            }
-                                            : item
-                                ),
-                        });
-                    },
+      addItem:
+        async (
+          productId
+        ) => {
+          const res =
+            await addToCart(
+              productId
+            );
 
-                decreaseQuantity:
-                    (
-                        productId
-                    ) => {
-                        const items =
-                            get().items;
+          set({
+            items:
+              res.data.data
+                .items,
+          });
+        },
 
-                        const existingItem =
-                            items.find(
-                                (
-                                    item
-                                ) =>
-                                    item.product
-                                        ._id ===
-                                    productId
-                            );
+      removeItem:
+        async (
+          productId
+        ) => {
+          const res =
+            await removeCartItem(
+              productId
+            );
 
-                        if (
-                            existingItem
-                                ?.quantity ===
-                            1
-                        ) {
-                            set({
-                                items:
-                                    items.filter(
-                                        (
-                                            item
-                                        ) =>
-                                            item
-                                                .product
-                                                ._id !==
-                                            productId
-                                    ),
-                            });
-                        } else {
-                            set({
-                                items:
-                                    items.map(
-                                        (
-                                            item
-                                        ) =>
-                                            item
-                                                .product
-                                                ._id ===
-                                                productId
-                                                ? {
-                                                    ...item,
-                                                    quantity:
-                                                        item.quantity -
-                                                        1,
-                                                }
-                                                : item
-                                    ),
-                            });
-                        }
-                    },
+          set({
+            items:
+              res.data.data
+                .items,
+          });
+        },
 
-                clearCart: () =>
-                    set({
-                        items: [],
-                    }),
+      updateQuantity:
+        async (
+          productId,
+          quantity
+        ) => {
+          const res =
+            await updateCartItem(
+              productId,
+              quantity
+            );
 
-                totalItems: () => {
-                    return get().items.reduce(
-                        (
-                            total,
-                            item
-                        ) =>
-                            total +
-                            item.quantity,
-                        0
-                    );
-                },
+          set({
+            items:
+              res.data.data
+                .items,
+          });
+        },
 
-                totalPrice: () => {
-                    return get().items.reduce(
-                        (
-                            total,
-                            item
-                        ) =>
-                            total +
-                            (item.product
-                                .salePrice ||
-                                item.product
-                                    .price) *
-                            item.quantity,
-                        0
-                    );
-                },
-            }),
-            {
-                name:
-                    "commerce-cart",
-            }
-        )
-    );
+      increaseQuantity:
+        async (
+          productId,
+          currentQty
+        ) => {
+          const res =
+            await updateCartItem(
+              productId,
+              currentQty + 1
+            );
+
+          set({
+            items:
+              res.data.data
+                .items,
+          });
+        },
+
+      decreaseQuantity:
+        async (
+          productId,
+          currentQty
+        ) => {
+          if (
+            currentQty <= 1
+          ) {
+            return;
+          }
+
+          const res =
+            await updateCartItem(
+              productId,
+              currentQty - 1
+            );
+
+          set({
+            items:
+              res.data.data
+                .items,
+          });
+        },
+
+      // clearCart: async () => {},
+
+clearItems: async () => {
+  await clearCartApi();
+
+  set({
+    items: [],
+  });
+},
+
+      totalItems:
+        () => {
+          return get().items.reduce(
+            (
+              total,
+              item
+            ) =>
+              total +
+              item.quantity,
+            0
+          );
+        },
+
+      totalPrice:
+        () => {
+          return get().items.reduce(
+            (
+              total,
+              item
+            ) =>
+              total +
+              (item.product
+                .salePrice ||
+                item.product
+                  .price) *
+                item.quantity,
+            0
+          );
+        },
+    })
+  );
