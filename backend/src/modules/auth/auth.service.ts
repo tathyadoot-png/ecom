@@ -46,6 +46,12 @@ export const loginUser = async (
       "Invalid credentials"
     );
   }
+  if (user.isBlocked) {
+  throw new ApiError(
+    403,
+    "Your account has been blocked"
+  );
+}
 
   const isPasswordCorrect =
     await bcrypt.compare(

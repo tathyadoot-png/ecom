@@ -4,15 +4,31 @@ import Link from "next/link";
 
 import { usePathname } from "next/navigation";
 
-import { SIDEBAR_ITEMS } from "@/constants/sidebar";
+import {
+  ADMIN_SIDEBAR_ITEMS,
+  VENDOR_SIDEBAR_ITEMS,
+} from "@/constants/sidebar";
 
 import { useAuthStore } from "@/store/auth-store";
 import { LogOut } from "lucide-react";
 import api from "@/lib/axios";
 export default function Sidebar() {
+
+
+
   const pathname = usePathname();
 
-  const { logout } = useAuthStore();
+  const {
+  logout,
+  user,
+} = useAuthStore();
+
+  const sidebarItems =
+  user?.role === "VENDOR"
+    ? VENDOR_SIDEBAR_ITEMS
+    : ADMIN_SIDEBAR_ITEMS;
+
+
 
   return (
     <aside className="w-64 min-h-screen bg-zinc-950 border-r border-zinc-800 text-white flex flex-col justify-between p-6">
@@ -20,11 +36,14 @@ export default function Sidebar() {
       <div>
         
         <h2 className="text-3xl font-bold mb-10">
-          Admin
+        {user?.role ===
+"VENDOR"
+  ? "Vendor Panel"
+  : "Admin Panel"}
         </h2>
 
         <nav className="space-y-2">
-          {SIDEBAR_ITEMS.map((item) => {
+          {sidebarItems.map((item) => {
             const Icon = item.icon;
 
             const isActive =

@@ -15,6 +15,7 @@ import {
   getProducts,
   getSingleProduct,
   updateProduct,
+  getVendorProducts,
 } from "./product.service";
 
 export const create = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -72,3 +73,22 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 
   return successResponse(res, "Product fetched successfully", product);
 });
+
+export const getVendorProductsController =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+      const products =
+        await getVendorProducts(
+          req.user._id
+        );
+
+      return successResponse(
+        res,
+        "Vendor products fetched",
+        products
+      );
+    }
+  );

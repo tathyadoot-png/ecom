@@ -7,6 +7,7 @@ import {
   remove,
   update,
   getById,
+  getVendorProductsController,
 } from "./product.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -82,6 +83,17 @@ router.delete(
     "SUPER_ADMIN"
   ),
   remove
+);
+
+router.get(
+  "/vendor/my-products",
+  authMiddleware,
+  roleMiddleware(
+    "VENDOR",
+    "ADMIN",
+    "SUPER_ADMIN"
+  ),
+  getVendorProductsController
 );
 
 export default router;

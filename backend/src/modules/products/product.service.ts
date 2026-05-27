@@ -4,6 +4,8 @@ import { Category } from "./category.model";
 
 import { ApiError } from "../../utils/ApiError";
 
+import { Store } from "../store/store.model";
+
 export const createProduct = async (data: any, userId: string) => {
   // Check category
   const category = await Category.findById(data.category);
@@ -21,12 +23,20 @@ export const createProduct = async (data: any, userId: string) => {
     throw new ApiError(400, "Product slug already exists");
   }
 
-  const product = await Product.create({
+const store =
+  await Store.findOne({
+    owner: userId,
+  });
+
+const product =
+  await Product.create({
     ...data,
 
     createdBy: userId,
-  });
 
+    storeId:
+      store?._id || null,
+  });
   return product;
 };
 
@@ -194,7 +204,38 @@ export const deleteProduct = async (productId: string) => {
 };
 
 
+export const getVendorProducts =
+  async (
+    userId: string
+  ) => {
+    const store =
+      await Store.findOne({
+        owner: userId,
+      });
 
+    if (!store) {
+      throw new ApiError(
+        404,
+        "Store not found"
+      );
+    }
+
+    const products =
+      await Product.find({
+        storeId: store._id,
+      })
+
+        .populate(
+          "category",
+          "name slug"
+        )
+
+        .sort({
+          createdAt: -1,
+        });
+
+    return products;
+  };
 
 
 
