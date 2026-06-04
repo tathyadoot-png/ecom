@@ -1,6 +1,10 @@
 import slugify from "slugify";
 
 import { ApiError } from "../../utils/ApiError";
+  import { Product } from "../products/product.model";
+
+import { Order } from "../orders/order.model";
+
 
 import {
   Store,
@@ -100,4 +104,94 @@ export const updateStoreStatus =
     await store.save();
 
     return store;
+  };
+
+
+
+
+
+
+export const getVendorDashboardStats =
+  async (userId: string) => {
+    const store =
+      await Store.findOne({
+        owner: userId,
+      });
+
+    if (!store) {
+      throw new ApiError(
+        404,
+        "Store not found"
+      );
+    }
+
+    const products =
+      await Product.find({
+        storeId: store._id,
+      });
+
+    const productIds =
+      products.map(
+        (product) =>
+          product._id
+      );
+
+    const orders =
+      await Order.find({
+        "items.product": {
+          $in: productIds,
+        },
+      })
+        .populate(
+          "user",
+          "name email"
+        )
+        .sort({
+          createdAt: -1,
+        });
+
+    const totalRevenue =
+      orders
+        .filter(
+          (order) =>
+            order.paymentStatus ===
+            "PAID"
+        )
+        .reduce(
+          (
+            total,
+            order
+          ) =>
+            total +
+            order.totalAmount,
+          0
+        );
+
+    return {
+      totalProducts:
+        products.length,
+
+      totalOrders:
+        orders.length,
+
+      pendingOrders:
+        orders.filter(
+          (order) =>
+            order.orderStatus ===
+            "PENDING"
+        ).length,
+
+      totalRevenue,
+
+      recentOrders:
+        orders.slice(0, 5),
+
+      lowStockProducts:
+        products
+          .filter(
+            (product) =>
+              product.stock < 5
+          )
+          .slice(0, 5),
+    };
   };

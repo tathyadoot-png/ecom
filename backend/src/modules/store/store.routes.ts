@@ -5,6 +5,7 @@ import {
   getAllStoresController,
   getMyStoreController,
   updateStoreStatusController,
+  getVendorDashboardStatsController
 } from "./store.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -56,4 +57,13 @@ router.patch(
   updateStoreStatusController
 );
 
+
+router.get(
+  "/vendor-dashboard",
+  authMiddleware,
+  roleMiddleware(
+    "VENDOR"
+  ),
+  getVendorDashboardStatsController
+);
 export default router;

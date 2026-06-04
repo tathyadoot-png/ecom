@@ -50,13 +50,17 @@ export default function ProtectedRoute({
     return null;
   }
 
-  // NOT ADMIN
-  if (
-    user.role !==
-      "ADMIN" &&
-    user.role !==
-      "SUPER_ADMIN"
-  ) {
+const allowedRoles = [
+  "ADMIN",
+  "SUPER_ADMIN",
+  "VENDOR",
+];
+
+if (
+  !allowedRoles.includes(
+    user.role
+  )
+) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-100 px-6">
         

@@ -8,6 +8,10 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { successResponse } from "../../utils/response";
 
 import { AuthRequest } from "../../middlewares/auth.middleware";
+import {
+  getVendorDashboardStats,
+} from "./store.service";
+
 
 import {
   createStore,
@@ -89,6 +93,25 @@ export const updateStoreStatusController =
         res,
         "Store updated successfully",
         store
+      );
+    }
+  );
+
+  export const getVendorDashboardStatsController =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+      const stats =
+        await getVendorDashboardStats(
+          req.user._id
+        );
+
+      return successResponse(
+        res,
+        "Vendor dashboard fetched successfully",
+        stats
       );
     }
   );

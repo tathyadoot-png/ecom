@@ -18,6 +18,9 @@ import {
 import { toast } from "sonner";
 
 import { getDashboardStats } from "@/services/admin.service";
+import { useAuthStore } from "@/store/auth-store";
+
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const [loading, setLoading] =
@@ -43,6 +46,23 @@ export default function HomePage() {
         setLoading(false);
       }
     };
+
+    const router =
+  useRouter();
+
+const { user } =
+  useAuthStore();
+
+useEffect(() => {
+  if (
+    user?.role ===
+    "VENDOR"
+  ) {
+    router.push(
+      "/vendor"
+    );
+  }
+}, [user, router]);
 
   useEffect(() => {
     fetchDashboard();
