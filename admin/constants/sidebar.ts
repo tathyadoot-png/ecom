@@ -5,6 +5,7 @@ import {
   Users,
   FolderTree,
   Store,
+  User
 } from "lucide-react";
 
 export const ADMIN_SIDEBAR_ITEMS =
@@ -77,4 +78,9 @@ export const VENDOR_SIDEBAR_ITEMS =
       href: "/vendor/orders",
       icon: Package,
     },
+    {
+  title: "My Profile",
+  href: "/vendor/profile",
+  icon: User,
+}
   ];

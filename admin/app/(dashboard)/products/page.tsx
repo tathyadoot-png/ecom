@@ -18,9 +18,13 @@ import Image from "next/image";
 import {
   deleteProduct,
   getProducts,
+  updateProductStatus,
 } from "@/services/product.service";
 
 import { Product } from "@/types/product.types";
+
+
+
 
 export default function ProductsPage() {
   const [products, setProducts] =

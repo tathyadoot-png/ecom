@@ -8,6 +8,7 @@ import {
   update,
   getById,
   getVendorProductsController,
+  updateProductStatusController,
 } from "./product.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -53,6 +54,7 @@ router.post(
   "/",
   authMiddleware,
   roleMiddleware(
+    "VENDOR",
     "ADMIN",
     "SUPER_ADMIN"
   ),
@@ -67,13 +69,16 @@ router.patch(
   "/:id",
   authMiddleware,
   roleMiddleware(
+    "VENDOR",
     "ADMIN",
     "SUPER_ADMIN"
   ),
-  upload.array("images", 5),
+  upload.array(
+    "images",
+    5
+  ),
   update
 );
-
 
 router.delete(
   "/:id",
@@ -95,5 +100,16 @@ router.get(
   ),
   getVendorProductsController
 );
+
+router.patch(
+  "/admin/:id/status",
+  authMiddleware,
+  roleMiddleware(
+    "ADMIN",
+    "SUPER_ADMIN"
+  ),
+  updateProductStatusController
+);
+
 
 export default router;

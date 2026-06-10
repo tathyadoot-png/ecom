@@ -71,3 +71,31 @@ export const updateProduct =
 
     return res.data;
   };
+
+  export const getVendorProducts =
+  async () => {
+    const res =
+      await api.get(
+        "/products/vendor/my-products"
+      );
+
+    return res.data;
+  };
+
+
+  export const updateProductStatus =
+  async (
+    id: string,
+    status: string
+  ) => {
+
+    const res =
+      await api.patch(
+        `/products/admin/${id}/status`,
+        {
+          status,
+        }
+      );
+
+    return res.data;
+  };

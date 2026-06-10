@@ -10,6 +10,8 @@ import { successResponse } from "../../utils/response";
 import { AuthRequest } from "../../middlewares/auth.middleware";
 import {
   getVendorDashboardStats,
+  updateStore,
+  getStoreById,
 } from "./store.service";
 
 
@@ -26,12 +28,26 @@ export const createStoreController =
       req: AuthRequest,
       res: Response
     ) => {
-      const store =
-        await createStore(
-          req.body,
-          req.user._id
-        );
+    const files =
+  req.files as any;
 
+const logo =
+  files?.logo?.[0]
+    ?.path || "";
+
+const banner =
+  files?.banner?.[0]
+    ?.path || "";
+
+const store =
+  await createStore(
+    {
+      ...req.body,
+      logo,
+      banner,
+    },
+    req.user._id
+  );
       return successResponse(
         res,
         "Store created successfully",
@@ -112,6 +128,69 @@ export const updateStoreStatusController =
         res,
         "Vendor dashboard fetched successfully",
         stats
+      );
+    }
+  );
+
+  export const updateMyStoreController =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+
+      const files =
+        req.files as any;
+
+      const logo =
+        files?.logo?.[0]
+          ?.path;
+
+      const banner =
+        files?.banner?.[0]
+          ?.path;
+
+      const store =
+        await updateStore(
+          req.user._id,
+          {
+            ...req.body,
+
+            ...(logo && {
+              logo,
+            }),
+
+            ...(banner && {
+              banner,
+            }),
+          }
+        );
+
+      return successResponse(
+        res,
+        "Store updated successfully",
+        store
+      );
+    }
+  );
+
+
+  export const getStoreByIdController =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+
+      const store =
+        await getStoreById(
+          req.params.id as string
+        );
+
+      return successResponse(
+        res,
+        "Store fetched",
+        store
       );
     }
   );

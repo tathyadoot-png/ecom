@@ -54,27 +54,53 @@ const { user } =
   useAuthStore();
 
 useEffect(() => {
+  if (!user) return;
+
   if (
-    user?.role ===
+    user.role ===
     "VENDOR"
   ) {
-    router.push(
+    router.replace(
       "/vendor"
     );
+    return;
   }
-}, [user, router]);
 
-  useEffect(() => {
+  if (
+    user.role ===
+      "ADMIN" ||
+    user.role ===
+      "SUPER_ADMIN"
+  ) {
     fetchDashboard();
-  }, []);
-
-  if (loading) {
-    return (
-      <div>
-        Loading dashboard...
-      </div>
-    );
   }
+}, [user, router]);   
+
+
+
+if (
+  loading &&
+  (
+    user?.role ===
+      "ADMIN" ||
+    user?.role ===
+      "SUPER_ADMIN"
+  )
+) {
+  return (
+    <div>
+      Loading dashboard...
+    </div>
+  );
+}  
+
+  if (!stats) {
+  return (
+    <div className="p-6">
+      Failed to load dashboard
+    </div>
+  );
+}
 
   return (
     <div className="space-y-8">

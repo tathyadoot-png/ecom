@@ -8,8 +8,13 @@ interface User {
   email: string;
 
   role: string;
-}
 
+  avatar?: string;
+
+  isBlocked?: boolean;
+
+  storeId?: string | null;
+}
 interface AuthState {
   user: User | null;
 

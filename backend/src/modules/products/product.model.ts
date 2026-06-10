@@ -5,9 +5,14 @@ import mongoose, {
 export enum ProductStatus {
   DRAFT = "draft",
 
+  PENDING = "pending",
+
+  APPROVED = "approved",
+
+  REJECTED = "rejected",
+
   PUBLISHED = "published",
 }
-
 export enum InventoryStatus {
   IN_STOCK = "in_stock",
 
@@ -134,7 +139,7 @@ const productSchema = new Schema(
         ),
 
       default:
-        ProductStatus.DRAFT,
+  ProductStatus.PENDING,
     },
 
     seo: {

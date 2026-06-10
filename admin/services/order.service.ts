@@ -31,3 +31,14 @@ export const updateOrderStatus =
       }
     );
   };
+
+  export const getVendorOrders =
+  async () => {
+
+    const res =
+      await api.get(
+        "/orders/vendor/my-orders"
+      );
+
+    return res.data;
+  };

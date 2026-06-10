@@ -5,11 +5,14 @@ import {
   getAllStoresController,
   getMyStoreController,
   updateStoreStatusController,
-  getVendorDashboardStatsController
+  getVendorDashboardStatsController,
+  updateMyStoreController,
+  getStoreByIdController
 } from "./store.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
-
+import { upload }
+from "../../middlewares/upload.middleware";
 import { roleMiddleware } from "../../middlewares/role.middleware";
 
 const router =
@@ -23,6 +26,18 @@ router.post(
     "ADMIN",
     "SUPER_ADMIN"
   ),
+
+  upload.fields([
+    {
+      name: "logo",
+      maxCount: 1,
+    },
+    {
+      name: "banner",
+      maxCount: 1,
+    },
+  ]),
+
   createStoreController
 );
 
@@ -66,4 +81,40 @@ router.get(
   ),
   getVendorDashboardStatsController
 );
+
+
+router.patch(
+  "/my-store",
+  authMiddleware,
+  roleMiddleware(
+    "VENDOR",
+    "ADMIN",
+    "SUPER_ADMIN"
+  ),
+
+  upload.fields([
+    {
+      name: "logo",
+      maxCount: 1,
+    },
+    {
+      name: "banner",
+      maxCount: 1,
+    },
+  ]),
+
+  updateMyStoreController
+);
+
+
+router.get(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(
+    "ADMIN",
+    "SUPER_ADMIN"
+  ),
+  getStoreByIdController
+);
+
 export default router;

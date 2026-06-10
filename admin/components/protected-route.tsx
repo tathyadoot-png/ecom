@@ -21,6 +21,18 @@ export default function ProtectedRoute({
   } = useAuthStore();
 
   useEffect(() => {
+  if (
+    user?.role ===
+    "VENDOR"
+  ) {
+    router.push(
+      "/vendor"
+    );
+  }
+}, [user, router]);
+
+
+  useEffect(() => {
     // NOT LOGGED IN
     if (
       !loading &&

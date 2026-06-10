@@ -6,6 +6,7 @@ import {
   getMine,
   getOne,
   updateOrderStatus,
+  getVendorOrdersController,
 } from "./order.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -51,6 +52,15 @@ router.patch(
     "SUPER_ADMIN"
   ),
   updateOrderStatus
+);
+
+router.get(
+  "/vendor/my-orders",
+  authMiddleware,
+  roleMiddleware(
+    "VENDOR"
+  ),
+  getVendorOrdersController
 );
 
 export default router;

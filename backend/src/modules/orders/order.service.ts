@@ -1,5 +1,5 @@
 import { Product } from "../products/product.model";
-
+import { Store } from "../store/store.model";
 import {
   Order,
   OrderStatus,
@@ -221,4 +221,50 @@ export const updateOrderStatusService =
     await order.save();
 
     return order;
+  };
+
+
+  export const getVendorOrders =
+  async (
+    userId: string
+  ) => {
+
+    const store =
+      await Store.findOne({
+        owner: userId,
+      });
+
+    if (!store) {
+      throw new ApiError(
+        404,
+        "Store not found"
+      );
+    }
+
+    const products =
+      await Product.find({
+        storeId: store._id,
+      });
+
+    const productIds =
+      products.map(
+        (product) =>
+          product._id
+      );
+
+    const orders =
+      await Order.find({
+        "items.product": {
+          $in: productIds,
+        },
+      })
+        .populate(
+          "user",
+          "name email"
+        )
+        .sort({
+          createdAt: -1,
+        });
+
+    return orders;
   };

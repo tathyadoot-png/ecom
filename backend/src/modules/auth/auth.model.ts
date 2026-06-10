@@ -85,11 +85,12 @@
         minlength: 6,
       },
 
-      avatar: {
-        type: String,
+     avatar: {
+  type: String,
 
-        default: "",
-      },
+  default:
+    "https://res.cloudinary.com/dysizd22t/image/upload/v1781083155/VENDOR-removebg-preview_wkk30j.png",
+},
 
       role: {
         type: String,

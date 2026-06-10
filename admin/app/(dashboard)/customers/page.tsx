@@ -5,12 +5,10 @@ import {
   useState,
 } from "react";
 
-import Link from "next/link";
-
 import {
   getAllUsers,
-  toggleBlockUser,
   updateUserRole,
+  toggleBlockUser,
 } from "@/services/user.service";
 
 import { toast } from "sonner";
@@ -48,12 +46,12 @@ export default function CustomersPage() {
 
   const handleRoleChange =
     async (
-      userId: string,
+      id: string,
       role: string
     ) => {
       try {
         await updateUserRole(
-          userId,
+          id,
           role
         );
 
@@ -71,11 +69,11 @@ export default function CustomersPage() {
       }
     };
 
-  const handleBlockToggle =
-    async (userId: string) => {
+  const handleBlock =
+    async (id: string) => {
       try {
         await toggleBlockUser(
-          userId
+          id
         );
 
         toast.success(
@@ -87,7 +85,7 @@ export default function CustomersPage() {
         console.log(error);
 
         toast.error(
-          "Failed to update user"
+          "Failed"
         );
       }
     };
@@ -106,16 +104,16 @@ export default function CustomersPage() {
       <div>
 
         <h1 className="text-3xl font-bold">
-          Customers
+          Users
         </h1>
 
         <p className="text-zinc-500 mt-2">
-          Manage platform users
+          Manage customers and vendors
         </p>
 
       </div>
 
-      <div className="bg-white rounded-3xl border overflow-hidden">
+      <div className="bg-white border rounded-3xl overflow-hidden">
 
         <div className="overflow-x-auto">
 
@@ -125,27 +123,23 @@ export default function CustomersPage() {
 
               <tr>
 
-                <th className="text-left p-4">
+                <th className="p-4 text-left">
                   Name
                 </th>
 
-                <th className="text-left p-4">
+                <th className="p-4 text-left">
                   Email
                 </th>
 
-                <th className="text-left p-4">
+                <th className="p-4 text-left">
                   Role
                 </th>
 
-                <th className="text-left p-4">
+                <th className="p-4 text-left">
                   Status
                 </th>
 
-                <th className="text-left p-4">
-                  Joined
-                </th>
-
-                <th className="text-left p-4">
+                <th className="p-4 text-left">
                   Actions
                 </th>
 
@@ -155,124 +149,97 @@ export default function CustomersPage() {
 
             <tbody>
 
-              {users.length ===
-              0 ? (
-                <tr>
-
-                  <td
-                    colSpan={6}
-                    className="text-center py-10 text-zinc-500"
+              {users.map(
+                (user) => (
+                  <tr
+                    key={
+                      user._id
+                    }
+                    className="border-t"
                   >
-                    No users found
-                  </td>
 
-                </tr>
-              ) : (
-                users.map(
-                  (user) => (
-                    <tr
-                      key={
-                        user._id
+                    <td className="p-4">
+                      {
+                        user.name
                       }
-                      className="border-t"
-                    >
+                    </td>
 
-                      <td className="p-4">
+                    <td className="p-4">
+                      {
+                        user.email
+                      }
+                    </td>
 
-                        <Link
-                          href={`/customers/${user._id}`}
-                          className="font-medium hover:underline"
-                        >
-                          {user.name}
-                        </Link>
+                    <td className="p-4">
 
-                      </td>
+                      <select
+                        value={
+                          user.role
+                        }
+                        onChange={(
+                          e
+                        ) =>
+                          handleRoleChange(
+                            user._id,
+                            e.target
+                              .value
+                          )
+                        }
+                        className="border rounded-xl px-3 py-2"
+                      >
 
-                      <td className="p-4 text-zinc-600">
-                        {user.email}
-                      </td>
+                        <option value="CUSTOMER">
+                          CUSTOMER
+                        </option>
 
-                      <td className="p-4">
+                        <option value="VENDOR">
+                          VENDOR
+                        </option>
 
-                        <select
-                          value={
-                            user.role
-                          }
-                          onChange={(
-                            e
-                          ) =>
-                            handleRoleChange(
-                              user._id,
-                              e.target
-                                .value
-                            )
-                          }
-                          className="border rounded-xl px-3 py-2"
-                        >
+                        <option value="ADMIN">
+                          ADMIN
+                        </option>
 
-                          <option value="CUSTOMER">
-                            CUSTOMER
-                          </option>
+                      </select>
 
-                          <option value="VENDOR">
-                            VENDOR
-                          </option>
+                    </td>
 
-                          <option value="ADMIN">
-                            ADMIN
-                          </option>
+                    <td className="p-4">
 
-                        </select>
-
-                      </td>
-
-                      <td className="p-4">
-
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            user.isBlocked
-                              ? "bg-red-100 text-red-600"
-                              : "bg-green-100 text-green-600"
-                          }`}
-                        >
-                          {user.isBlocked
-                            ? "Blocked"
-                            : "Active"}
+                      {user.isBlocked ? (
+                        <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-sm">
+                          Blocked
                         </span>
+                      ) : (
+                        <span className="px-3 py-1 rounded-full bg-green-100 text-green-600 text-sm">
+                          Active
+                        </span>
+                      )}
 
-                      </td>
+                    </td>
 
-                      <td className="p-4 text-sm text-zinc-500">
+                    <td className="p-4">
 
-                        {new Date(
-                          user.createdAt
-                        ).toLocaleDateString()}
+                      <button
+                        onClick={() =>
+                          handleBlock(
+                            user._id
+                          )
+                        }
+                        className={`px-4 py-2 rounded-xl text-white ${
+                          user.isBlocked
+                            ? "bg-green-600"
+                            : "bg-red-600"
+                        }`}
+                      >
+                        {user.isBlocked
+                          ? "Unblock"
+                          : "Block"}
+                      </button>
 
-                      </td>
+                    </td>
 
-                      <td className="p-4">
-
-                        <button
-                          onClick={() =>
-                            handleBlockToggle(
-                              user._id
-                            )
-                          }
-                          className={`px-4 py-2 rounded-xl text-white ${
-                            user.isBlocked
-                              ? "bg-green-600"
-                              : "bg-red-600"
-                          }`}
-                        >
-                          {user.isBlocked
-                            ? "Unblock"
-                            : "Block"}
-                        </button>
-
-                      </td>
-
-                    </tr>
-                  )
+                  </tr>
                 )
               )}
 

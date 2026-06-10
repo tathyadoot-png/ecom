@@ -16,6 +16,7 @@ import {
   getSingleProduct,
   updateProduct,
   getVendorProducts,
+  updateProductStatus
 } from "./product.service";
 
 export const create = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -89,6 +90,27 @@ export const getVendorProductsController =
         res,
         "Vendor products fetched",
         products
+      );
+    }
+  );
+
+  export const updateProductStatusController =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+
+      const product =
+        await updateProductStatus(
+          req.params.id as string,
+          req.body.status
+        );
+
+      return successResponse(
+        res,
+        "Product status updated",
+        product
       );
     }
   );

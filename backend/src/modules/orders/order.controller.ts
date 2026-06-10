@@ -15,6 +15,7 @@ import {
   createOrder,
   getMyOrders,
   getSingleOrder,
+  getVendorOrders
 } from "./order.service";
 
 import {
@@ -121,6 +122,26 @@ export const updateOrderStatus =
         res,
         "Order updated successfully",
         order
+      );
+    }
+  );
+
+  export const getVendorOrdersController =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+
+      const orders =
+        await getVendorOrders(
+          req.user._id
+        );
+
+      return successResponse(
+        res,
+        "Vendor orders fetched",
+        orders
       );
     }
   );

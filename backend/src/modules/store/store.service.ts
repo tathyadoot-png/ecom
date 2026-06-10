@@ -195,3 +195,59 @@ export const getVendorDashboardStats =
           .slice(0, 5),
     };
   };
+
+
+  export const updateStore =
+  async (
+    userId: string,
+    data: any
+  ) => {
+
+    const store =
+      await Store.findOne({
+        owner: userId,
+      });
+
+    if (!store) {
+      throw new ApiError(
+        404,
+        "Store not found"
+      );
+    }
+
+    Object.assign(
+      store,
+      data
+    );
+
+    await store.save();
+
+    return store;
+  };
+
+
+  export const getStoreById =
+  async (
+    storeId: string
+  ) => {
+
+    const store =
+      await Store.findById(
+        storeId
+      )
+      .populate(
+        "owner",
+        "name email role"
+      );
+
+    if (!store) {
+      throw new ApiError(
+        404,
+        "Store not found"
+      );
+    }
+
+    return store;
+  };
+
+  

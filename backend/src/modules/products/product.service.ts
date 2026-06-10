@@ -32,6 +32,8 @@ const product =
   await Product.create({
     ...data,
 
+        status:
+      ProductStatus.PENDING,
     createdBy: userId,
 
     storeId:
@@ -75,11 +77,11 @@ export const getProducts = async (query: any) => {
       };
   }
 
-  const filter: any = {
-    isActive: true,
+const filter: any = {
+  isActive: true,
 
-    status: ProductStatus.PUBLISHED,
-  };
+  status: ProductStatus.APPROVED,
+};
 
   // Search
   if (search) {
@@ -131,7 +133,7 @@ export const getSingleProduct = async (slug: string) => {
 
     isActive: true,
 
-    status: ProductStatus.PUBLISHED,
+    status: ProductStatus.APPROVED,
   }).populate("category", "name slug");
 
   if (!product) {
@@ -237,6 +239,30 @@ export const getVendorProducts =
     return products;
   };
 
+export const updateProductStatus =
+  async (
+    productId: string,
+    status: ProductStatus
+  ) => {
 
+    const product =
+      await Product.findById(
+        productId
+      );
+
+    if (!product) {
+      throw new ApiError(
+        404,
+        "Product not found"
+      );
+    }
+
+    product.status =
+      status;
+
+    await product.save();
+
+    return product;
+  };
 
   
