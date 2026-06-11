@@ -222,6 +222,16 @@ export const getVendorProducts =
       );
     }
 
+if (
+  store.status !==
+  "APPROVED"
+) {
+  throw new ApiError(
+    403,
+    "Store is not approved yet"
+  );
+}
+
     const products =
       await Product.find({
         storeId: store._id,
