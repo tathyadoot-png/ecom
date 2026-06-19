@@ -42,3 +42,20 @@ export const updateOrderStatus =
 
     return res.data;
   };
+
+  export const updateVendorOrderStatus =
+  async (
+    id: string,
+    status: string
+  ) => {
+
+    const res =
+      await api.patch(
+        `/orders/vendor/${id}/status`,
+        {
+          status,
+        }
+      );
+
+    return res.data;
+  };

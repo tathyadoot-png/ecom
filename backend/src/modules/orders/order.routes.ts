@@ -7,6 +7,7 @@ import {
   getOne,
   updateOrderStatus,
   getVendorOrdersController,
+  updateVendorOrderStatus,
 } from "./order.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -62,5 +63,15 @@ router.get(
   ),
   getVendorOrdersController
 );
+
+router.patch(
+  "/vendor/:id/status",
+  authMiddleware,
+  roleMiddleware(
+    "VENDOR"
+  ),
+  updateVendorOrderStatus
+);
+
 
 export default router;

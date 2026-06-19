@@ -4,41 +4,84 @@ import { Category } from "./category.model";
 
 import { ApiError } from "../../utils/ApiError";
 
-import { Store } from "../store/store.model";
+import {
+  Store,
+  StoreStatus,
+} from "../store/store.model";
 
-export const createProduct = async (data: any, userId: string) => {
+export const createProduct = async (
+  data: any,
+  userId: string
+) => {
+
   // Check category
-  const category = await Category.findById(data.category);
+
+  const category =
+    await Category.findById(
+      data.category
+    );
 
   if (!category) {
-    throw new ApiError(404, "Category not found");
+    throw new ApiError(
+      404,
+      "Category not found"
+    );
   }
 
   // Check slug uniqueness
-  const existingProduct = await Product.findOne({
-    slug: data.slug,
-  });
+
+  const existingProduct =
+    await Product.findOne({
+      slug: data.slug,
+    });
 
   if (existingProduct) {
-    throw new ApiError(400, "Product slug already exists");
+    throw new ApiError(
+      400,
+      "Product slug already exists"
+    );
   }
+
+  // Check store
 
 const store =
   await Store.findOne({
     owner: userId,
   });
 
-const product =
-  await Product.create({
-    ...data,
+if (!store) {
+  throw new ApiError(
+    404,
+    "Store not found"
+  );
+}
 
-        status:
-      ProductStatus.PENDING,
-    createdBy: userId,
+if (
+  store.status !==
+  StoreStatus.APPROVED
+) {
+  throw new ApiError(
+    403,
+    "Your store is not approved yet"
+  );
+}
 
-    storeId:
-      store?._id || null,
-  });
+  const product =
+    await Product.create({
+      ...data,
+
+      createdBy:
+        userId,
+
+      storeId:
+        store._id,
+
+      // Vendor products should go to draft first
+
+      status:
+        ProductStatus.PENDING,
+    });
+
   return product;
 };
 
@@ -143,44 +186,108 @@ export const getSingleProduct = async (slug: string) => {
   return product;
 };
 
-export const updateProduct = async (productId: string, data: any) => {
-  const product = await Product.findById(productId);
+export const updateProduct = async (
+  productId: string,
+  data: any,
+  userId?: string,
+  role?: string
+) => {
+
+  const product =
+    await Product.findById(
+      productId
+    );
 
   if (!product) {
-    throw new ApiError(404, "Product not found");
+    throw new ApiError(
+      404,
+      "Product not found"
+    );
   }
 
-  // Slug uniqueness check
-  if (data.slug && data.slug !== product.slug) {
-    const existingSlug = await Product.findOne({
-      slug: data.slug,
-    });
+  // Vendor can edit only own product
 
-    if (existingSlug) {
-      throw new ApiError(400, "Slug already exists");
+  if (
+    role === "VENDOR"
+  ) {
+
+    const store =
+      await Store.findOne({
+        owner: userId,
+      });
+
+    if (
+      !store ||
+      product.storeId?.toString() !==
+        store._id.toString()
+    ) {
+      throw new ApiError(
+        403,
+        "You can only edit your own products"
+      );
     }
   }
 
-  const updatedProduct = await Product.findByIdAndUpdate(productId, data, {
-    returnDocument: "after",
-  });
+  // Slug uniqueness
+
+  if (
+    data.slug &&
+    data.slug !==
+      product.slug
+  ) {
+
+    const existingSlug =
+      await Product.findOne({
+        slug: data.slug,
+      });
+
+    if (existingSlug) {
+      throw new ApiError(
+        400,
+        "Slug already exists"
+      );
+    }
+  }
+
+  const updatedProduct =
+    await Product.findByIdAndUpdate(
+      productId,
+      data,
+      {
+        new: true,
+      }
+    );
 
   return updatedProduct;
 };
 
 
-
 export const getProductById =
   async (
-    productId: string
+     productId: string,
+    userId?: string,
+    role?: string
   ) => {
     const product =
       await Product.findById(
         productId
       ).populate(
-        "category",
-        "name slug"
-      );
+  "category",
+  "name slug"
+)
+.populate({
+  path: "storeId",
+
+  select:
+    "name slug status owner",
+
+  populate: {
+    path: "owner",
+
+    select:
+      "name email role avatar",
+  },
+});
 
     if (!product) {
       throw new ApiError(
@@ -188,6 +295,26 @@ export const getProductById =
         "Product not found"
       );
     }
+
+    if (
+  role === "VENDOR"
+) {
+  const store =
+    await Store.findOne({
+      owner: userId,
+    });
+
+  if (
+    !store ||
+    product.storeId?._id.toString() !==
+      store._id.toString()
+  ) {
+    throw new ApiError(
+      403,
+      "Access denied"
+    );
+  }
+}
 
     return product;
   };
@@ -199,6 +326,8 @@ export const deleteProduct = async (productId: string) => {
   if (!product) {
     throw new ApiError(404, "Product not found");
   }
+
+  
 
   await Product.findByIdAndDelete(productId);
 
@@ -274,5 +403,31 @@ export const updateProductStatus =
 
     return product;
   };
+export const getAllProductsAdmin =
+  async () => {
 
-  
+    return Product.find()
+
+      .populate(
+        "category",
+        "name slug"
+      )
+
+      .populate({
+        path: "storeId",
+
+        select:
+          "name slug status owner",
+
+        populate: {
+          path: "owner",
+
+          select:
+            "name email role avatar",
+        },
+      })
+
+      .sort({
+        createdAt: -1,
+      });
+  };

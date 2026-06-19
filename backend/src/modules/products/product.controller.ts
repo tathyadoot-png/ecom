@@ -16,7 +16,8 @@ import {
   getSingleProduct,
   updateProduct,
   getVendorProducts,
-  updateProductStatus
+  updateProductStatus,
+  getAllProductsAdmin
 } from "./product.service";
 
 export const create = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -47,7 +48,12 @@ export const getOne = asyncHandler(async (req: Request, res: Response) => {
   return successResponse(res, "Product fetched successfully", product);
 });
 
-export const update = asyncHandler(async (req: Request, res: Response) => {
+export const update =
+asyncHandler(async (
+  req: AuthRequest,
+  res: Response
+) => {
+  
   const files = req.files as Express.Multer.File[];
 
   const imageUrls = files?.map((file: any) => file.path) || [];
@@ -58,7 +64,13 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     images: imageUrls.length > 0 ? imageUrls : undefined,
   });
 
-  const product = await updateProduct(req.params.id as string, validatedData);
+const product =
+  await updateProduct(
+    req.params.id as string,
+    validatedData,
+    req.user._id,
+    req.user.role
+  );
 
   return successResponse(res, "Product updated successfully", product);
 });
@@ -70,7 +82,12 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
-  const product = await getProductById(req.params.id as string);
+  const product = 
+  await getProductById(
+    req.params.id as string,
+    (req as any).user?._id,
+    (req as any).user?.role
+  );
 
   return successResponse(res, "Product fetched successfully", product);
 });
@@ -111,6 +128,27 @@ export const getVendorProductsController =
         res,
         "Product status updated",
         product
+      );
+    }
+  );
+
+
+
+
+  export const getAllProductsAdminController =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+
+      const products =
+        await getAllProductsAdmin();
+
+      return successResponse(
+        res,
+        "Products fetched",
+        products
       );
     }
   );

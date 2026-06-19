@@ -6,6 +6,26 @@ export interface Category {
   slug: string;
 }
 
+export interface StoreOwner {
+  _id: string;
+
+  name: string;
+
+  email: string;
+
+  role: string;
+}
+
+export interface Store {
+  _id: string;
+
+  name: string;
+
+  status: string;
+
+  owner?: StoreOwner;
+}
+
 export interface Product {
   _id: string;
 
@@ -19,6 +39,8 @@ export interface Product {
 
   category?: Category;
 
+  storeId?: Store;
+
   price: number;
 
   salePrice?: number;
@@ -31,7 +53,12 @@ export interface Product {
 
   isActive: boolean;
 
-  status: "draft" | "published";
+  status:
+    | "draft"
+    | "pending"
+    | "approved"
+    | "rejected"
+    | "published";
 
   createdAt: string;
 

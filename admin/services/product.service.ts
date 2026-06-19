@@ -99,3 +99,17 @@ export const updateProduct =
 
     return res.data;
   };
+
+
+  export const getAllProductsAdmin =
+  async () => {
+
+    const res =
+      await api.get(
+        "/products/admin/all"
+      );
+
+    return res.data;
+  };
+
+

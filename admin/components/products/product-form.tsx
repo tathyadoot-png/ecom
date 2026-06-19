@@ -23,7 +23,8 @@ interface Props {
 export default function ProductForm({ mode = "create", initialData }: Props) {
   const [loading, setLoading] = useState(false);
 
-  const [images, setImages] = useState<FileList | null>(null);
+const [images, setImages] =
+  useState<File[]>([]);
 
   const [previewImages, setPreviewImages] = useState<string[]>(
     initialData?.images || [],
@@ -32,26 +33,46 @@ export default function ProductForm({ mode = "create", initialData }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
 
   const [title, setTitle] = useState(initialData?.title || "");
-const [selectedCategory, setSelectedCategory] =
-  useState(
-    initialData?.category?._id || ""
-  );
-
- const [slug, setSlug] =
-  useState(
-    initialData?.slug || ""
-  );
-
-useEffect(() => {
-  if (mode === "create") {
-    setSlug(
-      title
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-")
+  const [selectedCategory, setSelectedCategory] =
+    useState(
+      initialData?.category?._id || ""
     );
-  }
-}, [title]);
+
+  const [slug, setSlug] =
+    useState(
+      initialData?.slug || ""
+    );
+
+    const removeImage = (
+  index: number
+) => {
+
+  setImages((prev) =>
+    prev.filter(
+      (_, i) =>
+        i !== index
+    )
+  );
+
+  setPreviewImages(
+    (prev) =>
+      prev.filter(
+        (_, i) =>
+          i !== index
+      )
+  );
+};
+
+  useEffect(() => {
+    if (mode === "create") {
+      setSlug(
+        title
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, "-")
+      );
+    }
+  }, [title]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -71,19 +92,38 @@ useEffect(() => {
     fetchCategories();
   }, []);
 
-  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+const handleImagesChange = (
+  e:
+    React.ChangeEvent<HTMLInputElement>
+) => {
 
-    setImages(files);
+  const files =
+    Array.from(
+      e.target.files || []
+    );
 
-    if (files) {
-      const previews = Array.from(files).map((file) =>
-        URL.createObjectURL(file),
-      );
+  setImages((prev) => [
+    ...prev,
+    ...files,
+  ]);
 
-      setPreviewImages(previews);
-    }
-  };
+  const previews =
+    files.map((file) =>
+      URL.createObjectURL(
+        file
+      )
+    );
+
+  setPreviewImages(
+    (prev) => [
+      ...prev,
+      ...previews,
+    ]
+  );
+
+  e.target.value = "";
+};
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,10 +139,17 @@ useEffect(() => {
 
       formData.set("slug", slug);
 
-     formData.set(
-  "category",
-  selectedCategory
-);
+      formData.set(
+        "category",
+        selectedCategory
+      );
+
+      if (mode === "create") {
+        formData.set(
+          "status",
+          "pending"
+        );
+      }
 
       // Images
       if (images) {
@@ -127,9 +174,12 @@ useEffect(() => {
     } catch (error: any) {
       console.log(error);
 
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        "Something went wrong";
+
+      toast.error(message);
     }
   };
 
@@ -154,14 +204,14 @@ useEffect(() => {
         <div>
           <label className="block mb-2 font-medium">Slug</label>
 
-       <input
-  type="text"
-  value={slug}
-  onChange={(e) =>
-    setSlug(
-      e.target.value
-    )
-  }
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) =>
+              setSlug(
+                e.target.value
+              )
+            }
             className="w-full border rounded-xl p-3 bg-zinc-100"
           />
         </div>
@@ -231,17 +281,17 @@ useEffect(() => {
         <div>
           <label className="block mb-2 font-medium">Category</label>
 
-        <select
-  name="category"
-  required
-  value={selectedCategory}
-  onChange={(e) =>
-    setSelectedCategory(
-      e.target.value
-    )
-  }
-  className="w-full border rounded-xl p-3"
->
+          <select
+            name="category"
+            required
+            value={selectedCategory}
+            onChange={(e) =>
+              setSelectedCategory(
+                e.target.value
+              )
+            }
+            className="w-full border rounded-xl p-3"
+          >
             <option value="">Select Category</option>
 
             {categories.map((category) => (
@@ -253,18 +303,21 @@ useEffect(() => {
         </div>
 
         <div>
-          <label className="block mb-2 font-medium">Status</label>
+  <label className="block mb-2 font-medium">
+    Status
+  </label>
 
-          <select
-            name="status"
-            defaultValue={initialData?.status || "draft"}
-            className="w-full border rounded-xl p-3"
-          >
-            <option value="draft">Draft</option>
-
-            <option value="published">Published</option>
-          </select>
-        </div>
+  <input
+    type="text"
+    value={
+      mode === "create"
+        ? "Pending Admin Approval"
+        : initialData?.status
+    }
+    disabled
+    className="w-full border rounded-xl p-3 bg-zinc-100"
+  />
+</div>
       </div>
 
       <div className="flex items-center gap-8">
@@ -301,12 +354,52 @@ useEffect(() => {
       {previewImages.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {previewImages.map((image, index) => (
-            <div
-              key={index}
-              className="relative aspect-square rounded-2xl overflow-hidden border"
-            >
-              <Image src={image} alt="Preview" fill className="object-cover" />
-            </div>
+             <div
+      key={index}
+      className="
+        relative
+        aspect-square
+        rounded-2xl
+        overflow-hidden
+        border
+      "
+    >
+
+      <button
+        type="button"
+        onClick={() =>
+          removeImage(
+            index
+          )
+        }
+        className="
+          absolute
+          top-2
+          right-2
+          z-20
+          w-7
+          h-7
+          rounded-full
+          bg-red-600
+          text-white
+          flex
+          items-center
+          justify-center
+        "
+      >
+        ×
+      </button>
+
+      <Image
+        src={image}
+        alt="Preview"
+        fill
+        className="
+          object-cover
+        "
+      />
+
+    </div>
           ))}
         </div>
       )}

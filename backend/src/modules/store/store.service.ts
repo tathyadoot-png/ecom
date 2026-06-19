@@ -226,7 +226,7 @@ export const getVendorDashboardStats =
   };
 
 
-  export const getStoreById =
+export const getStoreById =
   async (
     storeId: string
   ) => {
@@ -247,7 +247,54 @@ export const getVendorDashboardStats =
       );
     }
 
-    return store;
+    const products =
+      await Product.find({
+        storeId: store._id,
+      });
+
+    const productIds =
+      products.map(
+        (product) =>
+          product._id
+      );
+
+    const orders =
+      await Order.find({
+        "items.product": {
+          $in: productIds,
+        },
+      });
+
+    const revenue =
+      orders
+        .filter(
+          (order) =>
+            order.paymentStatus ===
+            "PAID"
+        )
+        .reduce(
+          (
+            total,
+            order
+          ) =>
+            total +
+            order.totalAmount,
+          0
+        );
+
+    return {
+      store,
+
+      stats: {
+        totalProducts:
+          products.length,
+
+        totalOrders:
+          orders.length,
+
+        revenue,
+      },
+    };
   };
 
   

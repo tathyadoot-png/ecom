@@ -21,7 +21,8 @@ export default function StoreDetailsPage() {
 
   const [store, setStore] =
     useState<any>(null);
-
+const [stats, setStats] =
+  useState<any>(null);
   const [loading, setLoading] =
     useState(true);
 
@@ -34,9 +35,13 @@ export default function StoreDetailsPage() {
               params.id as string
             );
 
-          setStore(
-            res.data
-          );
+        setStore(
+  res.data.store
+);
+
+setStats(
+  res.data.stats
+);
         } catch (error) {
           console.log(error);
         } finally {
@@ -77,6 +82,47 @@ export default function StoreDetailsPage() {
         </p>
 
       </div>
+
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+
+  <div className="border rounded-2xl p-6">
+
+    <p className="text-zinc-500">
+      Products
+    </p>
+
+    <h2 className="text-3xl font-bold mt-2">
+      {stats?.totalProducts || 0}
+    </h2>
+
+  </div>
+
+  <div className="border rounded-2xl p-6">
+
+    <p className="text-zinc-500">
+      Orders
+    </p>
+
+    <h2 className="text-3xl font-bold mt-2">
+      {stats?.totalOrders || 0}
+    </h2>
+
+  </div>
+
+  <div className="border rounded-2xl p-6">
+
+    <p className="text-zinc-500">
+      Revenue
+    </p>
+
+    <h2 className="text-3xl font-bold mt-2">
+      ₹{stats?.revenue || 0}
+    </h2>
+
+  </div>
+
+</div>
 
       {store.banner && (
         <div className="relative h-72 rounded-3xl overflow-hidden border">

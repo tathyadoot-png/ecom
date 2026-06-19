@@ -268,3 +268,80 @@ export const updateOrderStatusService =
 
     return orders;
   };
+
+
+  export const updateVendorOrderStatusService =
+  async (
+    userId: string,
+    orderId: string,
+    status: OrderStatus
+  ) => {
+
+    const store =
+      await Store.findOne({
+        owner: userId,
+      });
+
+    if (!store) {
+      throw new ApiError(
+        404,
+        "Store not found"
+      );
+    }
+
+    const products =
+      await Product.find({
+        storeId: store._id,
+      });
+
+    const productIds =
+      products.map(
+        (product) =>
+          product._id.toString()
+      );
+
+    const order =
+      await Order.findById(
+        orderId
+      );
+
+    if (!order) {
+      throw new ApiError(
+        404,
+        "Order not found"
+      );
+    }
+
+    const hasVendorProduct =
+      order.items.some(
+        (item: any) =>
+          productIds.includes(
+            item.product.toString()
+          )
+      );
+
+    if (!hasVendorProduct) {
+      throw new ApiError(
+        403,
+        "You are not allowed to update this order"
+      );
+    }
+
+    order.orderStatus =
+      status;
+
+    if (
+      status ===
+      OrderStatus.DELIVERED
+    ) {
+      order.isDelivered =
+        true;
+
+      order.deliveredAt =
+        new Date();
+    }
+
+    await order.save();
+
+    return order;
+  };

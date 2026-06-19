@@ -9,6 +9,7 @@ import {
   getById,
   getVendorProductsController,
   updateProductStatusController,
+  getAllProductsAdminController,
 } from "./product.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -27,6 +28,7 @@ router.get(
   "/id/:id",
   authMiddleware,
   roleMiddleware(
+    "VENDOR",
     "ADMIN",
     "SUPER_ADMIN"
   ),
@@ -38,6 +40,18 @@ router.get(
   "/slug/:slug",
   getOne
 );
+
+router.get(
+  "/admin/all",
+  authMiddleware,
+  roleMiddleware(
+    "ADMIN",
+    "SUPER_ADMIN"
+  ),
+  getAllProductsAdminController
+);
+
+
 
 // Admin
 router.get(
@@ -110,6 +124,7 @@ router.patch(
   ),
   updateProductStatusController
 );
+
 
 
 export default router;

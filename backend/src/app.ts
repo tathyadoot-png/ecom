@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/test", testRoutes);
-app.use(errorMiddleware);
+
 app.use(
   "/api/products",
   productRoutes
@@ -91,5 +91,11 @@ app.use(
   "/api/stores",
   storeRoutes
 );
+
+
+
+
+
+app.use(errorMiddleware);
 
 export default app;

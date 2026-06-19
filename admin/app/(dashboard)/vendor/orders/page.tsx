@@ -10,6 +10,9 @@ import {
 } from "@/services/order.service";
 
 import { toast } from "sonner";
+import {
+  updateVendorOrderStatus,
+} from "@/services/order.service";
 
 export default function VendorOrdersPage() {
   const [orders, setOrders] =
@@ -49,6 +52,35 @@ export default function VendorOrdersPage() {
       </div>
     );
   }
+
+const handleStatusChange =
+  async (
+    orderId: string,
+    status: string
+  ) => {
+
+    try {
+
+      await updateVendorOrderStatus(
+        orderId,
+        status
+      );
+
+      toast.success(
+        "Order updated"
+      );
+
+      fetchOrders();
+
+    } catch (error) {
+
+      toast.error(
+        "Failed to update order"
+      );
+
+    }
+  };
+
 
   return (
     <div className="space-y-6">
@@ -162,9 +194,36 @@ export default function VendorOrdersPage() {
 
                         <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">
 
-                          {
-                            order.orderStatus
-                          }
+                         <select
+  value={
+    order.orderStatus
+  }
+  onChange={(e) =>
+    handleStatusChange(
+      order._id,
+      e.target.value
+    )
+  }
+  className="border rounded-xl px-3 py-2"
+>
+
+  <option value="CONFIRMED">
+    CONFIRMED
+  </option>
+
+  <option value="PROCESSING">
+    PROCESSING
+  </option>
+
+  <option value="SHIPPED">
+    SHIPPED
+  </option>
+
+  <option value="DELIVERED">
+    DELIVERED
+  </option>
+
+</select>
 
                         </span>
 

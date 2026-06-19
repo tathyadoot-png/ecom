@@ -56,8 +56,8 @@ export const createProductSchema =
         z.boolean()
       ),
 
-    status: z.enum([
-      "draft",
-      "published",
-    ]),
+   status: z.enum([
+  "draft",
+  "pending",
+]).optional(),
   });

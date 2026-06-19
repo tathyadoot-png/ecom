@@ -145,3 +145,25 @@ export const updateOrderStatus =
       );
     }
   );
+
+
+  export const updateVendorOrderStatus =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+
+      const order =
+        await updateOrderStatusService(
+          req.params.id as string,
+          req.body.status
+        );
+
+      return successResponse(
+        res,
+        "Order status updated",
+        order
+      );
+    }
+  );
