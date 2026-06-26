@@ -1,263 +1,416 @@
+/* =========================================
+TAILWIND
+========================================= */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* =========================
-   THEME TOKENS
-========================= */
+/* =========================================
+DESIGN SYSTEM
+Artisan Marketplace Theme
+========================================= */
 
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
+/* Base */
 
-  --card: #ffffff;
-  --card-foreground: #09090b;
+--background: #ffffff;
+--foreground: #1e2a5e;
 
-  --popover: #ffffff;
-  --popover-foreground: #09090b;
+--card: #ffffff;
+--card-foreground: #1e2a5e;
 
-  --primary: #18181b;
-  --primary-foreground: #fafafa;
+--popover: #ffffff;
+--popover-foreground: #1e2a5e;
 
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
+--primary: #1e2a5e;
+--primary-foreground: #ffffff;
 
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
+--secondary: #ede4d5;
+--secondary-foreground: #1e2a5e;
 
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
+--muted: #f8f3ea;
+--muted-foreground: #64748b;
 
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
+--accent: #ffbb33;
+--accent-foreground: #1e2a5e;
 
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #18181b;
+--destructive: #e03e2f;
+--destructive-foreground: #ffffff;
 
-  --radius: 1rem;
+--border: #e5e7eb;
+--input: #e5e7eb;
+--ring: #1e2a5e;
 
-  /* custom ecommerce colors */
-  --brand: #111827;
-  --brand-light: #1f2937;
+--radius: 1.25rem;
 
-  --success: #16a34a;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+/* =========================================
+Brand Colors
+========================================= */
 
-  /* gradients */
-  --gradient-primary: linear-gradient(
-    135deg,
-    #111827 0%,
-    #1f2937 100%
-  );
+--brand: #1e2a5e;
+--brand-light: #32418a;
 
-  --gradient-light: linear-gradient(
-    135deg,
-    #ffffff 0%,
-    #f4f4f5 100%
-  );
+--marigold: #ffbb33;
+--emerald: #008c6a;
+--vermilion: #e03e2f;
+--gold: #d4a017;
+--sandstone: #ede4d5;
+
+--paper: #f8f3ea;
+--surface: #ffffff;
+--surface-alt: #f6f0e6;
+
+/* =========================================
+Shadows
+========================================= */
+
+--artisan-shadow:
+0 20px 60px rgba(30, 42, 94, 0.08);
+
+--artisan-shadow-lg:
+0 30px 90px rgba(30, 42, 94, 0.12);
+
+--artisan-border:
+rgba(30, 42, 94, 0.08);
+
+/* =========================================
+Gradients
+========================================= */
+
+--gradient-primary:
+linear-gradient(
+135deg,
+#1e2a5e 0%,
+#32418a 100%
+);
+
+--gradient-craft:
+linear-gradient(
+135deg,
+#ffbb33 0%,
+#d4a017 100%
+);
+
+--gradient-cultural:
+linear-gradient(
+135deg,
+#1e2a5e 0%,
+#008c6a 50%,
+#ffbb33 100%
+);
+
+--gradient-light:
+linear-gradient(
+135deg,
+#ffffff 0%,
+#f8f3ea 100%
+);
 }
 
-/* =========================
-   DARK MODE
-========================= */
+/* =========================================
+DARK MODE
+========================================= */
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
+--background: #0f172a;
+--foreground: #f8fafc;
 
-  --card: #18181b;
-  --card-foreground: #fafafa;
+--card: #162033;
+--card-foreground: #f8fafc;
 
-  --popover: #18181b;
-  --popover-foreground: #fafafa;
+--popover: #162033;
+--popover-foreground: #f8fafc;
 
-  --primary: #fafafa;
-  --primary-foreground: #09090b;
+--primary: #ffbb33;
+--primary-foreground: #0f172a;
 
-  --secondary: #27272a;
-  --secondary-foreground: #fafafa;
+--secondary: #1e293b;
+--secondary-foreground: #f8fafc;
 
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
+--muted: #1e293b;
+--muted-foreground: #94a3b8;
 
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
+--accent: #ffbb33;
+--accent-foreground: #0f172a;
 
-  --destructive: #dc2626;
-  --destructive-foreground: #fafafa;
+--border: #334155;
+--input: #334155;
+--ring: #ffbb33;
 
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #fafafa;
+--surface: #162033;
+--surface-alt: #1e293b;
 
-  --brand: #fafafa;
-  --brand-light: #d4d4d8;
+--gradient-primary:
+linear-gradient(
+135deg,
+#ffbb33 0%,
+#d4a017 100%
+);
 
-  --gradient-primary: linear-gradient(
-    135deg,
-    #fafafa 0%,
-    #d4d4d8 100%
-  );
-
-  --gradient-light: linear-gradient(
-    135deg,
-    #18181b 0%,
-    #09090b 100%
-  );
+--gradient-light:
+linear-gradient(
+135deg,
+#162033 0%,
+#0f172a 100%
+);
 }
 
-/* =========================
-   TAILWIND V4 THEME MAP
-========================= */
+/* =========================================
+TAILWIND THEME MAP
+========================================= */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+--color-background: var(--background);
+--color-foreground: var(--foreground);
 
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+--color-card: var(--card);
+--color-card-foreground: var(--card-foreground);
 
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+--color-popover: var(--popover);
+--color-popover-foreground: var(--popover-foreground);
 
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+--color-primary: var(--primary);
+--color-primary-foreground: var(--primary-foreground);
 
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+--color-secondary: var(--secondary);
+--color-secondary-foreground: var(--secondary-foreground);
 
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+--color-muted: var(--muted);
+--color-muted-foreground: var(--muted-foreground);
 
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+--color-accent: var(--accent);
+--color-accent-foreground: var(--accent-foreground);
 
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+--color-border: var(--border);
+--color-input: var(--input);
+--color-ring: var(--ring);
 
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+/* artisan colors */
 
-  --radius-lg: var(--radius);
+--color-brand: var(--brand);
+--color-marigold: var(--marigold);
+--color-emerald: var(--emerald);
+--color-vermilion: var(--vermilion);
+--color-gold: var(--gold);
+--color-sandstone: var(--sandstone);
 
-  /* fonts */
-  --font-sans: var(--font-body);
-  --font-heading: var(--font-heading);
+--radius-lg: var(--radius);
+
+--font-sans: var(--font-body);
+--font-heading: var(--font-heading);
 }
 
-/* =========================
-   BASE LAYER
-========================= */
+/* =========================================
+BASE
+========================================= */
 
 @layer base {
-  * {
-    @apply border-border;
+
+* {
+  @apply border-border;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-background text-foreground antialiased;
-    font-family: var(--font-body);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-heading);
-    @apply tracking-tight;
-  }
-
-  h1 {
-    @apply text-4xl md:text-5xl font-bold;
-  }
-
-  h2 {
-    @apply text-3xl md:text-4xl font-bold;
-  }
-
-  h3 {
-    @apply text-2xl font-semibold;
-  }
-
-  p {
-    @apply leading-7;
-  }
-
-  button {
-    @apply cursor-pointer;
-  }
-
-  input,
-  textarea,
-  select {
-    @apply outline-none;
-  }
+html {
+scroll-behavior: smooth;
 }
 
-/* =========================
-   UTILITIES
-========================= */
+body {
+@apply bg-background text-foreground antialiased;
+font-family: var(--font-body);
+overflow-x: hidden;
+min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: var(--font-heading);
+@apply tracking-tight;
+}
+
+p {
+@apply leading-7;
+}
+
+button {
+@apply cursor-pointer;
+}
+
+input,
+textarea,
+select {
+@apply outline-none;
+}
+}
+
+/* =========================================
+UTILITIES
+========================================= */
 
 @utility container-max {
-  @apply w-[96%] sm:w-[94%] lg:w-[90%] xl:w-[85%] mx-auto;
-}
-
-@utility glass {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(14px);
-}
-
-.dark .glass {
-  background: rgba(24, 24, 27, 0.6);
+@apply w-[95%] lg:w-[90%] xl:w-[85%] mx-auto;
 }
 
 @utility section-space {
-  @apply py-14 md:py-20;
+@apply py-16 md:py-24;
+}
+
+@utility glass {
+background: rgba(255,255,255,.65);
+backdrop-filter: blur(16px);
+}
+
+@utility card-artisan {
+background: white;
+border: 1px solid var(--artisan-border);
+border-radius: 2rem;
+box-shadow: var(--artisan-shadow);
 }
 
 @utility card-hover {
-  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  @apply transition-all duration-500;
+}
+
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--artisan-shadow-lg);
+}
+
+@utility heading-display {
+@apply text-5xl md:text-7xl font-bold tracking-tight;
+}
+
+@utility heading-section {
+@apply text-3xl md:text-5xl font-bold;
 }
 
 @utility text-gradient {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+background: var(--gradient-primary);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
 }
 
 @utility bg-gradient-brand {
-  background: var(--gradient-primary);
+background: var(--gradient-primary);
 }
 
-/* =========================
-   SCROLLBAR
-========================= */
+@utility bg-gradient-cultural {
+background: var(--gradient-cultural);
+}
+
+@utility badge-marigold {
+background: rgba(255,187,51,.12);
+color: var(--marigold);
+}
+
+@utility badge-emerald {
+background: rgba(0,140,106,.12);
+color: var(--emerald);
+}
+
+@utility badge-vermilion {
+background: rgba(224,62,47,.12);
+color: var(--vermilion);
+}
+
+@utility btn-primary {
+background: var(--brand);
+color: white;
+border-radius: 999px;
+transition: .3s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+@utility btn-gold {
+background: var(--gold);
+color: white;
+}
+
+/* =========================================
+SCROLLBAR
+========================================= */
 
 ::-webkit-scrollbar {
-  width: 8px;
+width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a1a1aa;
-  border-radius: 999px;
+background: #94a3b8;
+border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #71717a;
+background: #64748b;
+}
+
+
+.heading-display {
+  font-family: var(--font-heading);
+
+  font-size: clamp(
+    3rem,
+    8vw,
+    6rem
+  );
+
+  font-weight: 600;
+
+  line-height: 0.95;
+
+  letter-spacing: -0.04em;
+}
+
+.heading-section {
+  font-family: var(--font-heading);
+
+  font-size: clamp(
+    2rem,
+    5vw,
+    4rem
+  );
+
+  font-weight: 600;
+
+  line-height: 1;
+}
+
+.heading-card {
+  font-family: var(--font-heading);
+
+  font-size: 1.5rem;
+
+  font-weight: 600;
+
+  line-height: 1.2;
+}
+
+
+.body-large {
+  font-size: 1.125rem;
+
+  line-height: 1.8;
+}
+
+.body-normal {
+  font-size: 1rem;
+
+  line-height: 1.7;
+}
+
+.body-small {
+  font-size: 0.875rem;
+
+  line-height: 1.6;
 }

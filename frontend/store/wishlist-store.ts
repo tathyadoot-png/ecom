@@ -1,5 +1,5 @@
 import { create } from "zustand";
-
+import { getWishlist } from "@/services/wishlist.service";
 interface WishlistState {
   products: any[];
 
@@ -18,6 +18,8 @@ interface WishlistState {
   isInWishlist: (
     productId: string
   ) => boolean;
+
+  fetchWishlist: () => Promise<void>;
 }
 
 export const useWishlistStore =
@@ -55,6 +57,18 @@ export const useWishlistStore =
                 productId
             ),
         })),
+
+        fetchWishlist: async () => {
+  try {
+    const res = await getWishlist();
+
+    set({
+      products: res.data.data || [],
+    });
+  } catch (error) {
+    console.log(error);
+  }
+},
 
       isInWishlist: (
         productId
