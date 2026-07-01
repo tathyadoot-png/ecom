@@ -15,6 +15,31 @@ export const createCategory =
         "Category already exists"
       );
     }
+if (
+  data.displayOrder > 0
+) {
+
+  const existingDisplayOrder =
+    await Category.findOne({
+
+      displayOrder:
+        data.displayOrder,
+
+    });
+
+  if (
+    existingDisplayOrder
+  ) {
+
+    throw new ApiError(
+      400,
+      "Display Order already exists."
+    );
+
+  }
+
+}
+
 
     const category =
       await Category.create(

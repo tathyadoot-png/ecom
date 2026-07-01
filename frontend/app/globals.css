@@ -107,6 +107,45 @@ linear-gradient(
 #ffffff 0%,
 #f8f3ea 100%
 );
+
+
+/* =========================================
+Spacing
+========================================= */
+
+--space-xs: .5rem;
+--space-sm: .75rem;
+--space-md: 1rem;
+--space-lg: 1.5rem;
+--space-xl: 2rem;
+--space-2xl: 3rem;
+--space-3xl: 5rem;
+
+/* =========================================
+Radius
+========================================= */
+
+--radius-sm: .75rem;
+--radius-md: 1rem;
+--radius-lg: 1.5rem;
+--radius-xl: 2rem;
+--radius-full: 999px;
+
+/* =========================================
+Animation
+========================================= */
+
+--duration-fast: .2s;
+--duration-normal: .35s;
+--duration-slow: .5s;
+
+/* =========================================
+Header
+========================================= */
+
+--header-height: 84px;
+
+
 }
 
 /* =========================================
@@ -200,6 +239,24 @@ TAILWIND THEME MAP
 
 --font-sans: var(--font-body);
 --font-heading: var(--font-heading);
+
+
+--spacing-xs: var(--space-xs);
+--spacing-sm: var(--space-sm);
+--spacing-md: var(--space-md);
+--spacing-lg: var(--space-lg);
+--spacing-xl: var(--space-xl);
+--spacing-2xl: var(--space-2xl);
+
+--radius-sm: var(--radius-sm);
+--radius-md: var(--radius-md);
+--radius-lg: var(--radius-lg);
+--radius-xl: var(--radius-xl);
+
+--shadow-artisan: var(--artisan-shadow);
+--shadow-artisan-lg: var(--artisan-shadow-lg);
+
+
 }
 
 /* =========================================
@@ -272,6 +329,30 @@ border-radius: 2rem;
 box-shadow: var(--artisan-shadow);
 }
 
+@utility surface {
+background: var(--surface);
+}
+
+@utility surface-alt {
+background: var(--surface-alt);
+}
+
+@utility border-artisan {
+border:1px solid var(--artisan-border);
+}
+
+@utility rounded-artisan {
+border-radius:2rem;
+}
+
+@utility shadow-artisan {
+box-shadow:var(--artisan-shadow);
+}
+
+@utility shadow-artisan-lg {
+box-shadow:var(--artisan-shadow-lg);
+}
+
 @utility card-hover {
   @apply transition-all duration-500;
 }
@@ -281,13 +362,13 @@ box-shadow: var(--artisan-shadow);
   box-shadow: var(--artisan-shadow-lg);
 }
 
-@utility heading-display {
+/* @utility heading-display {
 @apply text-5xl md:text-7xl font-bold tracking-tight;
 }
 
 @utility heading-section {
 @apply text-3xl md:text-5xl font-bold;
-}
+} */
 
 @utility text-gradient {
 background: var(--gradient-primary);
@@ -334,6 +415,54 @@ background: var(--gold);
 color: white;
 }
 
+@utility text-brand {
+color:var(--brand);
+}
+
+@utility text-gold {
+color:var(--gold);
+}
+
+@utility text-muted {
+color:var(--muted-foreground);
+}
+
+@utility bg-paper {
+background:var(--paper);
+}
+
+@utility btn-outline {
+
+background:white;
+
+color:var(--brand);
+
+border:1px solid rgba(30,42,94,.12);
+
+transition:.35s;
+
+border-radius:999px;
+}
+
+@utility hover-lift {
+
+transition:.35s;
+
+}
+
+.hover-lift:hover{
+
+transform:translateY(-8px);
+
+box-shadow:var(--artisan-shadow-lg);
+
+}
+
+.btn-outline:hover{
+
+background:var(--paper);
+
+}
 /* =========================================
 SCROLLBAR
 ========================================= */
@@ -356,7 +485,7 @@ background: #64748b;
 }
 
 
-.heading-display {
+/* .heading-display {
   font-family: var(--font-heading);
 
   font-size: clamp(
@@ -370,9 +499,9 @@ background: #64748b;
   line-height: 0.95;
 
   letter-spacing: -0.04em;
-}
+} */
 
-.heading-section {
+/* .heading-section {
   font-family: var(--font-heading);
 
   font-size: clamp(
@@ -384,9 +513,9 @@ background: #64748b;
   font-weight: 600;
 
   line-height: 1;
-}
+} */
 
-.heading-card {
+/* .heading-card {
   font-family: var(--font-heading);
 
   font-size: 1.5rem;
@@ -394,7 +523,7 @@ background: #64748b;
   font-weight: 600;
 
   line-height: 1.2;
-}
+} */
 
 
 .body-large {

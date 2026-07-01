@@ -1,6 +1,4 @@
-import mongoose, {
-  Schema,
-} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const categorySchema = new Schema(
   {
@@ -23,12 +21,26 @@ const categorySchema = new Schema(
       default: "",
     },
 
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    featured: {
+      type: Boolean,
+      default: false,
+    },
+
+ displayOrder: {
+  type: Number,
+  default: 0,
+  min: 0,
+},
+
     parentCategory: {
-      type:
-        Schema.Types.ObjectId,
-
+      type: Schema.Types.ObjectId,
       ref: "Category",
-
       default: null,
     },
 
@@ -37,12 +49,27 @@ const categorySchema = new Schema(
       default: true,
     },
 
+    seo: {
+      title: {
+        type: String,
+        default: "",
+      },
+
+      description: {
+        type: String,
+        default: "",
+      },
+
+      keywords: [
+        {
+          type: String,
+        },
+      ],
+    },
+
     storeId: {
-      type:
-        Schema.Types.ObjectId,
-
+      type: Schema.Types.ObjectId,
       ref: "Store",
-
       default: null,
     },
   },
@@ -55,8 +82,7 @@ categorySchema.index({
   name: "text",
 });
 
-export const Category =
-  mongoose.model(
-    "Category",
-    categorySchema
-  );
+export const Category = mongoose.model(
+  "Category",
+  categorySchema
+);

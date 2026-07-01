@@ -1,32 +1,29 @@
 import api from "@/lib/axios";
 
-export const createCategory =
-  async (data: any) => {
-    const res =
-      await api.post(
-        "/categories",
-        data
-      );
+export const getCategories = async () => {
+  const res = await api.get("/categories");
+  return res.data;
+};
 
-    return res.data;
-  };
+export const createCategory = async (
+  data: FormData
+) => {
+  return api.post(
+    "/categories",
+    data,
+    {
+      headers: {
+        "Content-Type":
+          "multipart/form-data",
+      },
+    }
+  );
+};
 
-export const getCategories =
-  async () => {
-    const res =
-      await api.get(
-        "/categories"
-      );
-
-    return res.data;
-  };
-
-export const deleteCategory =
-  async (id: string) => {
-    const res =
-      await api.delete(
-        `/categories/${id}`
-      );
-
-    return res.data;
-  };
+export const deleteCategory = async (
+  id: string
+) => {
+  return api.delete(
+    `/categories/${id}`
+  );
+};

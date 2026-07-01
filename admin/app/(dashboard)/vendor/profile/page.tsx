@@ -20,7 +20,7 @@ import {
 } from "sonner";
 import { BadgeCheck } from "lucide-react";
 const DEFAULT_VENDOR_AVATAR =
-    "https://res.cloudinary.com/dysizd22t/image/upload/v1781083155/VENDOR-removebg-preview_wkk30j.png";
+    "https://res.cloudinary.com/dysizd22t/image/upload/v1782803886/avatar_qxrvoh.png";
 export default function VendorProfilePage() {
     const { user } =
         useAuthStore();

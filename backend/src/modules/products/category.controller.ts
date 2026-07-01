@@ -17,31 +17,47 @@ import {
   getCategories,
 } from "./category.service";
 
-export const create =
-  asyncHandler(
-    async (
-      req: AuthRequest,
-      res: Response
-    ) => {
-      const validatedData =
-        createCategorySchema.parse(
-          req.body
-        );
+export const create = asyncHandler(
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
 
-      const category =
-        await createCategory(
-          validatedData
-        );
+    const file =
+      req.file as Express.Multer.File;
 
-      return successResponse(
-        res,
-        "Category created successfully",
-        category,
-        201
+    const validatedData =
+      createCategorySchema.parse({
+
+        ...req.body,
+
+        image:
+          file?.path || "",
+
+        featured:
+          req.body.featured ===
+          "true",
+
+       displayOrder:
+Number(
+req.body.displayOrder || 0
+),
+
+      });
+
+    const category =
+      await createCategory(
+        validatedData
       );
-    }
-  );
 
+    return successResponse(
+      res,
+      "Category created successfully",
+      category,
+      201
+    );
+  }
+);
 export const getAll =
   asyncHandler(
     async (

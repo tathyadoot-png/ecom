@@ -10,12 +10,13 @@ import { authMiddleware } from "../../middlewares/auth.middleware";
 
 import { roleMiddleware } from "../../middlewares/role.middleware";
 
+import { upload } from "../../middlewares/upload.middleware";
+
 const router = express.Router();
 
 // Public
 router.get("/", getAll);
 
-// Admin
 router.post(
   "/",
   authMiddleware,
@@ -23,8 +24,10 @@ router.post(
     "ADMIN",
     "SUPER_ADMIN"
   ),
+  upload.single("image"),
   create
 );
+
 
 router.delete(
   "/:id",
@@ -35,5 +38,7 @@ router.delete(
   ),
   remove
 );
+
+
 
 export default router;

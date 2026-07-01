@@ -10,32 +10,35 @@ const storage =
   new CloudinaryStorage({
     cloudinary,
 
-    params: async (
-      req,
-      file
-    ) => {
-      return {
-        folder:
-          "commerce-platform/products",
+  params: async (req) => {
 
-        allowed_formats: [
-          "jpg",
-          "jpeg",
-          "png",
-          "webp",
-        ],
+const folder =
+req.body.folder ||
+"commerce-platform/general";
 
-        transformation: [
-          {
-            width: 1200,
-            crop: "limit",
-            quality: "auto",
-            fetch_format:
-              "auto",
-          },
-        ],
-      };
-    },
+return{
+
+folder,
+
+allowed_formats:[
+"jpg",
+"jpeg",
+"png",
+"webp",
+],
+
+transformation:[
+{
+width:1200,
+crop:"limit",
+quality:"auto",
+fetch_format:"auto",
+},
+],
+
+};
+
+},
   });
 
 export const upload = multer({
