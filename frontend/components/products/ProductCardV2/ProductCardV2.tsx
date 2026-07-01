@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, ShoppingBag } from "lucide-react";
-import { Card } from "@/components/ui";
+import { Heart, ArrowUpRight } from "lucide-react";
 
 interface Props {
   product: {
@@ -12,13 +11,13 @@ interface Props {
     image: string;
     title: string;
     category: string;
-    artisan: string;
-    origin: string;
-    material: string;
+    artisan?: string;
+    origin?: string;
+    material?: string;
     price: number;
     salePrice?: number;
-    rating: number;
-    reviews: number;
+    rating?: number;
+    reviews?: number;
     featured?: boolean;
     handmade?: boolean;
   };
@@ -30,91 +29,85 @@ export default function ProductCardV2({ product }: Props) {
 
   return (
     <Link href={`/products/${product.slug}`} className="block h-full group">
-      {/* Background stacked paper layers effect from the design inspiration */}
-      <div className="relative h-full transition-all duration-500 ease-out group-hover:-translate-y-1">
-        {/* Decorative background sheet layers for the artisan feel */}
-        <div className="absolute inset-0 bg-[#EFEBE4] rounded-[24px] translate-x-1.5 translate-y-1.5 scale-[0.99] opacity-70" />
-        <div className="absolute inset-0 bg-[#F5F1E9] rounded-[24px] translate-x-0.5 translate-y-0.5 scale-[0.995] opacity-90" />
+      <div className="relative h-full bg-[#FAF9F5] rounded-[32px] p-4 border border-[#EAE6DF] transition-all duration-500 ease-out hover:shadow-xl hover:shadow-[#1c1a17]/5 hover:-translate-y-1 flex flex-col justify-between gap-4">
+        
+        {/* IMAGE CONTAINER AREA - Hardcoded height class fallback added for layout safety */}
+        <div className="relative w-full h-[260px] sm:h-[280px] bg-[#E2DACF] rounded-[24px] overflow-hidden transition-colors duration-500 group-hover:bg-[#DBD2C5] z-0">
+          
+          {/* Real Next.js Image Element */}
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            sizes="(max-width: 458px) 100vw, 33vw"
+            priority={product.featured}
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 z-10"
+          />
 
-        <Card
-   
-          padding="none"
-          className="relative h-full flex flex-col bg-[#FDFBF7] border border-[#EBE5DA] rounded-[24px] shadow-sm overflow-hidden"
-        >
-          {/* IMAGE CONTAINER: Fluid organic smooth curves on the bottom left edge */}
-          <div className="relative w-full aspect-square bg-[#ECE6DC] overflow-hidden rounded-br-[4.5rem] transition-colors duration-500 group-hover:bg-[#E7E0D5]">
-            <div className="absolute inset-0 p-6 flex items-center justify-center">
-              <Image
-                src={product.image}
-                alt={product.title}
-                fill
-                sizes="(max-width: 458px) 50vw, 23vw"
-                priority={product.featured}
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-            </div>
-
-            {/* Minimal floating actions inside image frame */}
-            <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-                className="h-9 w-9 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-zinc-700 hover:text-red-500 hover:bg-white transition-all duration-300 active:scale-95"
-                aria-label="Wishlist"
-              >
-                <Heart size={15} className="stroke-[1.5]" />
-              </button>
-            </div>
-
-            {/* Premium floating quick cart bag attached cleanly at the corner curve intersection */}
-            <div className="absolute bottom-0 right-4 translate-y-1/2 z-20">
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-                className="h-10 w-10 rounded-full bg-[#1C1A17] text-[#FAF8F5] shadow-md flex items-center justify-center transition-transform duration-300 hover:scale-105 active:scale-95"
-                aria-label="Quick shop"
-              >
-                <ShoppingBag size={14} className="stroke-[2]" />
-              </button>
-            </div>
+          {/* FLOATING PRICE BADGE */}
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full font-sans font-semibold text-sm text-[#1C1A17] shadow-sm flex items-center gap-1 z-20">
+            <span>₹{displayPrice.toLocaleString()}</span>
+            {hasDiscount && (
+              <span className="text-[10px] text-[#A1998C] line-through font-normal">
+                ₹{product.price.toLocaleString()}
+              </span>
+            )}
           </div>
 
-          {/* EDITORIAL CONTENT AREA */}
-          <div className="p-6 pt-7 flex flex-col flex-grow">
-            {/* Title */}
-            <h3 className="font-heading text-lg font-medium text-[#1C1A17] tracking-tight leading-snug line-clamp-2 min-h-[48px]">
-              {product.title}
-            </h3>
+          {/* MINIMAL INTERACTION BUTTONS */}
+          <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              className="h-8 w-8 rounded-full bg-white text-zinc-700 hover:text-red-500 shadow-sm flex items-center justify-center transition-transform active:scale-95"
+              aria-label="Wishlist"
+            >
+              <Heart size={14} className="stroke-[1.5]" />
+            </button>
+          </div>
 
-            {/* Category metadata row */}
-            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[#8A8275] tracking-wide font-medium">
-              <span>Category:</span>
-              <span className="text-[#5C564E]">{product.category}</span>
-            </div>
+        
+        </div>
 
-            {/* Pricing Section stacked natively matching the original luxury layouts */}
-            <div className="mt-5 pt-3 border-t border-[#EDE7DD] flex flex-wrap items-baseline gap-2">
-              <span className="font-sans text-lg font-semibold text-[#292622]">
-                ₹{displayPrice.toLocaleString()}
-              </span>
-
-              {hasDiscount && (
-                <>
-                  <span className="font-sans text-xs text-[#A1998C] line-through">
-                    ₹{product.price.toLocaleString()}
-                  </span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[#EFECE6] text-[#6E6557]">
-                    {Math.round(((product.price - (product.salePrice || 0)) / product.price) * 100)}% OFF
-                  </span>
-                </>
+        {/* BOTTOM METADATA CONTENT AREA */}
+        <div className="px-1 pb-1 flex flex-col flex-grow justify-between gap-3">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <h3 className="font-medium text-[16px] text-[#1C1A17] tracking-tight leading-tight line-clamp-1 group-hover:text-[#5C6546] transition-colors">
+                {product.title}
+              </h3>
+              {product.origin && (
+                <p className="text-[11px] text-[#A1998C] mt-0.5">{product.origin}</p>
               )}
             </div>
+
+            {/* ACTION POINTER */}
+            <div className="flex items-center gap-0.5 text-[11px] font-medium text-[#1C1A17] border-b border-[#1C1A17] pb-0.5 uppercase tracking-wider shrink-0 transition-all group-hover:gap-1.5">
+              <span>Order</span>
+              <ArrowUpRight size={12} className="stroke-[2]" />
+            </div>
           </div>
-        </Card>
+
+          {/* DYNAMIC PILL SPECIFICATIONS */}
+          <div className="flex flex-wrap gap-1.5 items-center">
+            <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#6E6557]">
+              {product.category}
+            </span>
+            {product.material && (
+              <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#6E6557]">
+                {product.material}
+              </span>
+            )}
+            {product.handmade && (
+              <span className="text-[10px] font-medium px-2.5 py-1 rounded-full bg-[#E5EAD8] text-[#55633A]">
+                Handmade
+              </span>
+            )}
+          </div>
+        </div>
+
       </div>
     </Link>
   );
