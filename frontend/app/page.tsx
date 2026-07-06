@@ -1,11 +1,15 @@
+import CategoryGrid from "@/components/categories/CategoryGrid";
+import FeaturedProducts from "@/components/home/FeaturedProducts/FeaturedProducts";
 import Hero from "@/components/home/Hero";
-import ProductGridDemo from "@/components/products/ProductGridDemo";
-
+import ProductGrid from "@/components/products/ProductGrid";
 export default function Home() {
   return (
     <>
       <Hero />
-      <ProductGridDemo/>
+       <CategoryGrid />
+      <ProductGrid/>
+        <FeaturedProducts />
+
     </>
   );
 }

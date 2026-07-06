@@ -1,14 +1,18 @@
 import api from "@/lib/axios";
 
 export const getProducts =
-  async (params?: any) => {
-    return api.get(
-      "/products",
-      {
-        params,
-      }
-    );
-  };
+async (
+params?: any
+)=>{
+
+return api.get(
+"/products",
+{
+params
+}
+);
+
+};
 
 export const getSingleProduct =
   async (slug: string) => {

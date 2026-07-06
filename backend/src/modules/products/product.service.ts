@@ -86,9 +86,10 @@ if (
 };
 
 export const getProducts = async (query: any) => {
+
   const page = Number(query.page) || 1;
 
-  const limit = Number(query.limit) || 10;
+  const limit = Number(query.limit) || 12;
 
   const skip = (page - 1) * limit;
 
@@ -98,10 +99,10 @@ export const getProducts = async (query: any) => {
 
   const featured = query.featured;
 
-  let sortOption = {};
+  let sortOption: any = {};
 
-  // Sorting
   switch (query.sort) {
+
     case "price_asc":
       sortOption = {
         price: 1,
@@ -118,34 +119,61 @@ export const getProducts = async (query: any) => {
       sortOption = {
         createdAt: -1,
       };
+
   }
 
-const filter: any = {
-  isActive: true,
+  const filter: any = {
 
-  status: ProductStatus.APPROVED,
-};
+    isActive: true,
 
-  // Search
+    status: ProductStatus.APPROVED,
+
+  };
+
   if (search) {
+
     filter.$text = {
+
       $search: search,
+
     };
+
   }
 
-  // Category filter
   if (category) {
+
     filter.category = category;
+
   }
 
-  // Featured filter
   if (featured === "true") {
+
     filter.featured = true;
+
   }
 
   const products = await Product.find(filter)
 
-    .populate("category", "name slug")
+    .populate(
+      "category",
+      "name slug image"
+    )
+
+    .populate({
+
+      path: "storeId",
+
+      select: "name slug owner",
+
+      populate: {
+
+        path: "owner",
+
+        select: "name avatar",
+
+      },
+
+    })
 
     .sort(sortOption)
 
@@ -153,21 +181,28 @@ const filter: any = {
 
     .limit(limit);
 
-  const total = await Product.countDocuments(filter);
+  const total =
+    await Product.countDocuments(filter);
 
   return {
+
     products,
 
     pagination: {
+
       total,
 
       page,
 
       limit,
 
-      totalPages: Math.ceil(total / limit),
+      totalPages:
+        Math.ceil(total / limit),
+
     },
+
   };
+
 };
 
 export const getSingleProduct = async (slug: string) => {

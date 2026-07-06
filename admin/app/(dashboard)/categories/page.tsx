@@ -25,21 +25,21 @@ import {
 
 interface Category {
 
-  _id:string;
+  _id: string;
 
-  name:string;
+  name: string;
 
-  slug:string;
+  slug: string;
 
-  image:string;
+  image: string;
 
-  description:string;
+  description: string;
 
-  displayOrder:number;
+  displayOrder: number;
 
-  featured:boolean;
+  featured: boolean;
 
-  createdAt?:string;
+  createdAt?: string;
 
 }
 
@@ -57,8 +57,8 @@ export default function CategoriesPage() {
   const [image, setImage] =
     useState<File | null>(null);
 
-const [displayOrder,setDisplayOrder]=
-useState(0);
+  const [displayOrder, setDisplayOrder] =
+    useState(0);
 
   const [saving, setSaving] =
     useState(false);
@@ -168,9 +168,9 @@ useState(0);
         );
 
         formData.append(
-"displayOrder",
-String(displayOrder)
-)
+          "displayOrder",
+          String(displayOrder)
+        )
 
         formData.append(
           "folder",
@@ -194,7 +194,7 @@ String(displayOrder)
 
         setDescription("");
 
-       setDisplayOrder(0)
+        setDisplayOrder(0)
 
         setImage(null);
 
@@ -661,7 +661,7 @@ rounded-xl
 
 bg-brand
 
-text-white
+text-black
 
 font-medium
 

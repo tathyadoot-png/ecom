@@ -7,33 +7,49 @@ export interface Category {
 }
 
 export interface Product {
-  _id: string;
 
-  title: string;
+_id:string;
 
-  slug: string;
+title:string;
 
-  description: string;
+slug:string;
 
-  shortDescription?: string;
+description:string;
 
-  category?: Category;
+price:number;
 
-  price: number;
+salePrice:number;
 
-  salePrice?: number;
+images:string[];
 
-  stock: number;
+featured:boolean;
 
-  images: string[];
+averageRating:number;
 
-  featured: boolean;
+numReviews:number;
 
-  isActive: boolean;
+category:{
 
-  averageRating: number;
+name:string;
 
-numReviews: number;
+slug:string;
 
-  status: "draft" | "published";
+image:string;
+
+};
+
+storeId?:{
+
+name:string;
+
+owner?:{
+
+name:string;
+
+avatar:string;
+
+};
+
+};
+
 }
