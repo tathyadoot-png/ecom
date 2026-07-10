@@ -28,6 +28,8 @@ averageRating:number;
 
 numReviews:number;
 
+stock: number;
+
 category:{
 
 name:string;

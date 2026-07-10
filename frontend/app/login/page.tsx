@@ -93,7 +93,7 @@ setUser(
 
         </div>
 
-        <div className="space-y-4">
+        <div className="">
           
           <input
             type="email"

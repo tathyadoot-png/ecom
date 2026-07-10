@@ -36,37 +36,36 @@ export const useCategoryStore =
     loading: false,
 
 fetchCategories: async () => {
-
   try {
-
-    set({ loading: true });
+    set({
+      loading: true,
+    });
 
     const res = await getCategories();
 
-    console.log("CATEGORY API RESPONSE =>", res);
+    const categories = res.data.data;
 
-    console.log("CATEGORY DATA =>", res.data);
-
-    console.log("FULL RESPONSE", JSON.stringify(res.data, null, 2));
-
-    console.log("TYPE =>", typeof res.data);
-console.log("DATA =>", res.data);
-console.log("IS ARRAY =>", Array.isArray(res.data));
-
-  } catch (error: any) {
-
-    console.log("CATEGORY ERROR =>", error);
-
-    console.log("CATEGORY RESPONSE =>", error?.response);
+    const sorted = [...categories].sort(
+      (a, b) =>
+        (a.displayOrder ?? 9999) -
+        (b.displayOrder ?? 9999)
+    );
 
     set({
-
+      categories: sorted,
       loading: false,
+    });
 
+  } catch (error) {
+
+    console.error(error);
+
+    set({
+      categories: [],
+      loading: false,
     });
 
   }
-
 }
 
   }));

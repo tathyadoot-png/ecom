@@ -6,7 +6,7 @@ import Carousel from "@/components/ui/Carousel";
 import SectionContainer from "@/components/ui/SectionContainer/SectionContainer";
 import SectionHeading from "@/components/ui/SectionHeading/SectionHeading";
 
-import FeaturedProductCard from "./FeaturedProductCard";
+import ProductCard from "@/components/products/ProductCard";
 import FeaturedProductSkeleton from "./ProductSkeleton";
 
 import {
@@ -109,7 +109,7 @@ console.log("STORE PRODUCTS =>", products);
 
               >
 
-                <FeaturedProductCard
+                <ProductCard
 
                   product={product}
 

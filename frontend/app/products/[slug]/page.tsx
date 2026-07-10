@@ -20,7 +20,7 @@ import {
     Product,
 } from "@/types/product.types";
 
-import ProductCard from "@/components/products/product-card";
+import ProductCard from "@/components/products/ProductCard";
 
 import ReviewSection from "@/components/reviews/review-section";
 

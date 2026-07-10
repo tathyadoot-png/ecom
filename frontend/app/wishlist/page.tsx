@@ -6,7 +6,7 @@ import {
 
 import Link from "next/link";
 
-import ProductCard from "@/components/products/product-card";
+import ProductCard from "@/components/products/ProductCard";
 
 import {
   getWishlist,

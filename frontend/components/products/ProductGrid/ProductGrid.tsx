@@ -2,39 +2,14 @@
 
 import { useEffect, useState } from "react";
 
-import ProductCardV2 from "../ProductCardV2";
-
+import ProductCard from "../ProductCard";
 import ProductSkeleton from "./ProductSkeleton";
 
 import { getProducts } from "@/services/product.service";
 
 import SectionHeading from "@/components/ui/SectionHeading/SectionHeading";
 
-interface Product {
-  _id: string;
-
-  slug: string;
-
-  title: string;
-
-  price: number;
-
-  salePrice?: number;
-
-  featured: boolean;
-
-  images: string[];
-
-  category: {
-    name: string;
-  };
-
-  storeId?: {
-    owner?: {
-      name: string;
-    };
-  };
-}
+import { Product } from "@/types/product.types";
 
 export default function ProductGrid() {
 
@@ -54,6 +29,8 @@ export default function ProductGrid() {
 
     try {
 
+      setLoading(true);
+
       const res =
         await getProducts({
 
@@ -64,14 +41,20 @@ export default function ProductGrid() {
         });
 
       setProducts(
-        res.data.data.products
+
+        res.data.data.products || []
+
       );
 
-    } catch (err) {
+    }
+
+    catch (err) {
 
       console.log(err);
 
-    } finally {
+    }
+
+    finally {
 
       setLoading(false);
 
@@ -81,148 +64,124 @@ export default function ProductGrid() {
 
   return (
 
-<section className="section-space">
+    <section className="section-space">
 
-<div className="container-max">
+      <div className="container-max">
 
-<SectionHeading
+        <SectionHeading
 
-badge="FEATURED"
+          badge="FEATURED COLLECTION"
 
-title="Featured Creations"
+          title="Handpicked Artisan Treasures"
 
-description="Handpicked masterpieces crafted by India's finest artisans."
+          description="Discover handcrafted creations carefully selected from talented artisans across India."
 
-/>
+        />
 
-<div className="mt-16">
+        <div className="mt-16">
 
-{loading ? (
+          {loading ? (
 
-<div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+            <div
+              className="
+              grid
+              gap-8
+              grid-cols-1
+              sm:grid-cols-2
+              xl:grid-cols-3
+              "
+            >
 
-{Array.from({
+              {Array.from({
 
-length:6,
+                length: 6,
 
-}).map((_,i)=>(
+              }).map((_, index) => (
 
-<ProductSkeleton
-key={i}
-/>
+                <ProductSkeleton
 
-))}
+                  key={index}
 
-</div>
+                />
 
-) : products.length===0 ? (
+              ))}
 
-<div
-className="
-rounded-3xl
-border
-bg-white
-py-24
-text-center
-"
->
+            </div>
 
-<h3
-className="
-heading-card
-"
->
+          ) : products.length === 0 ? (
 
-No Products Found
+            <div
+              className="
+              rounded-[32px]
+              border
+              bg-white
+              py-24
+              text-center
+              "
+            >
 
-</h3>
+              <h2
+                className="
+                text-3xl
+                font-heading
+                font-semibold
+                "
+              >
 
-<p
-className="
-body-normal
-mt-4
-"
->
+                No Products Available
 
-Products will appear here once published.
+              </h2>
 
-</p>
+              <p
+                className="
+                mt-4
+                text-muted-foreground
+                "
+              >
 
-</div>
+                Products will appear here after publishing.
 
-) : (
+              </p>
 
-<div
-className="
-grid
-gap-8
-md:grid-cols-2
-xl:grid-cols-3
-"
->
+            </div>
 
-{products.map(
+          ) : (
 
-(product)=>(
+            <>
 
-<ProductCardV2
+              <div
+                className="
+                grid
+                gap-8
+                grid-cols-1
+                sm:grid-cols-2
+                xl:grid-cols-3
+                "
+              >
 
-key={product._id}
+                {products.map((product) => (
 
-product={{
+                  <ProductCard
 
-id:product._id,
+                    key={product._id}
 
-slug:product.slug,
+                    product={product}
 
-title:product.title,
+                  />
 
-image:
-product.images?.[0],
+                ))}
 
-category:
-product.category?.name,
+              </div>
 
-artisan:
-product.storeId?.owner?.name ||
-"Artisan",
+            </>
 
-origin:"",
+          )}
 
-material:"",
+        </div>
 
-price:
-product.price,
+      </div>
 
-salePrice:
-product.salePrice,
-
-rating:0,
-
-reviews:0,
-
-featured:
-product.featured,
-
-handmade:true,
-
-}}
-
- />
-
-)
-
-)}
-
-</div>
-
-)}
-
-</div>
-
-</div>
-
-</section>
+    </section>
 
   );
 
