@@ -1,26 +1,66 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Colors */
+  --color-primary: #8B2C1D;
+  --color-accent: #D4A24C;
+  --color-background: #F7F1E8;
+  --color-text: #2B2118;
+  --color-forest: #3A5A40;
+  --color-cream: #FDF8F2;
+  --color-warm-beige: #E8DCC8;
+  --color-light-gold: #E8D5A3;
+
+  /* Typography */
+  --font-heading: DM Serif Display, serif;
+  --font-body: Manrope, sans-serif;
+
+  /* Border Radius */
+  --radius-card: 28px;
+  --radius-button: 9999px;
+  --radius-input: 20px;
+
+  /* Spacing (luxury, generous) */
+  --spacing: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+  --spacing-80: 80px;
+  --spacing-120: 120px;
+
+  /* Shadows (soft, warm) */
+  --shadow-soft: 0 4px 24px rgba(43, 33, 24, 0.06);
+  --shadow-medium: 0 8px 40px rgba(43, 33, 24, 0.08);
+  --shadow-hover: 0 12px 56px rgba(43, 33, 24, 0.12);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Base styles */
+@layer base {
+  html {
+    font-family: var(--font-body);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    scroll-behavior: smooth;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+  }
+
+  /* Optional: custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: 4px;
+  }
 }

@@ -1,39 +1,26 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+import { categoryService } from '@/services/category.service';
+import { Category } from '@/types/category.types';
 
-import { Category } from "@/types/category.types";
-
-import { categoryService } from "@/services/category.service";
-
-interface CategoryStore {
+interface CategoryState {
   categories: Category[];
-
-  loading: boolean;
-
+  isLoading: boolean;
+  error: string | null;
   fetchCategories: () => Promise<void>;
 }
 
-export const useCategoryStore =
-  create<CategoryStore>((set) => ({
-    categories: [],
+export const useCategoryStore = create<CategoryState>((set) => ({
+  categories: [],
+  isLoading: false,
+  error: null,
 
-    loading: false,
-
-    fetchCategories: async () => {
-      try {
-        set({
-          loading: true,
-        });
-
-        const { data } =
-          await categoryService.getAll();
-
-        set({
-          categories: data.data,
-        });
-      } finally {
-        set({
-          loading: false,
-        });
-      }
-    },
-  }));
+  fetchCategories: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const categories = await categoryService.getCategories();
+      set({ categories, isLoading: false });
+    } catch (error) {
+      set({ error: (error as Error).message, isLoading: false });
+    }
+  },
+}));

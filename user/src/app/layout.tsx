@@ -1,22 +1,25 @@
 import type { Metadata } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
-
+import { DM_Serif_Display, Manrope } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const heading = DM_Serif_Display({
   subsets: ["latin"],
-  variable: "--font-sans",
+  weight: "400",
+  variable: "--font-heading",
 });
 
-const cormorant = Cormorant_Garamond({
+const body = Manrope({
   subsets: ["latin"],
-  variable: "--font-serif",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-body",
 });
 
 export const metadata: Metadata = {
-  title: "Indian Artisan Marketplace",
-  description: "Premium Reusable Ecommerce Platform",
+  title: {
+    default: "Indian Artisan Marketplace",
+    template: "%s | Indian Artisan Marketplace",
+  },
+  description:
+    "Premium reusable ecommerce platform built for handcrafted Indian products.",
 };
 
 export default function RootLayout({
@@ -25,9 +28,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body
-        className={`${inter.variable} ${cormorant.variable} antialiased`}
+        className={`${heading.variable} ${body.variable}`}
       >
         {children}
       </body>
