@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
+import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { Category } from '@/types/category.types';
 import { cn } from '@/lib/utils';
 
@@ -14,9 +15,7 @@ interface CategoryCardProps {
 }
 
 const CategoryCard = ({ category, variant = 'default', className }: CategoryCardProps) => {
-  const { _id, name, slug, image, description, featured } = category;
-
-  const imageUrl = image || '/images/fallback-category.jpg';
+  const { name, slug, image, description, featured } = category;
 
   const cardClasses = {
     default: 'h-64 md:h-72',
@@ -25,7 +24,7 @@ const CategoryCard = ({ category, variant = 'default', className }: CategoryCard
   };
 
   return (
-    <Link href={`/category/${slug}`} className="block group">
+    <Link href={`/categories/${slug}`} className="block group">
       <Card
         hoverable
         padding="none"
@@ -37,13 +36,17 @@ const CategoryCard = ({ category, variant = 'default', className }: CategoryCard
       >
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src={imageUrl}
-            alt={name}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
+          {image ? (
+            <Image
+              src={image}
+              alt={name}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          ) : (
+            <ImagePlaceholder className="absolute inset-0" />
+          )}
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-text/60 via-text/20 to-transparent" />
         </div>

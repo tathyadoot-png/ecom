@@ -4,6 +4,47 @@ import { Product } from "../products/product.model";
 
 import { ApiError } from "../../utils/ApiError";
 
+const recalculateProductRating =
+  async (productId: string) => {
+    const product =
+      await Product.findById(
+        productId
+      );
+
+    if (!product) {
+      return;
+    }
+
+    const reviews =
+      await Review.find({
+        product: productId,
+      });
+
+    const averageRating =
+      reviews.length === 0
+        ? 0
+        : reviews.reduce(
+            (
+              acc,
+              item
+            ) =>
+              item.rating + acc,
+            0
+          ) / reviews.length;
+
+    product.averageRating =
+      Number(
+        averageRating.toFixed(
+          1
+        )
+      );
+
+    product.numReviews =
+      reviews.length;
+
+    await product.save();
+  };
+
 export const createReviewService =
   async (
     userId: string,
@@ -46,32 +87,9 @@ export const createReviewService =
       comment,
     });
 
-    const reviews =
-      await Review.find({
-        product: productId,
-      });
-
-    const averageRating =
-      reviews.reduce(
-        (
-          acc,
-          item
-        ) =>
-          item.rating + acc,
-        0
-      ) / reviews.length;
-
-    product.averageRating =
-      Number(
-        averageRating.toFixed(
-          1
-        )
-      );
-
-    product.numReviews =
-      reviews.length;
-
-    await product.save();
+    await recalculateProductRating(
+      productId
+    );
 
     return true;
   };
@@ -134,6 +152,10 @@ export const getProductReviewsService =
 
     await Review.findByIdAndDelete(
       reviewId
+    );
+
+    await recalculateProductRating(
+      review.product.toString()
     );
 
     return true;

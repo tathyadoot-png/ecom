@@ -49,7 +49,8 @@ Current development focus is on Multi Vendor Marketplace architecture.
 # Project Structure
 
 backend/
-frontend/
+frontend/ (frozen, reference only)
+user/ (final production storefront)
 admin/
 
 ## backend
@@ -66,9 +67,29 @@ Contains:
 * Wishlist
 * Cart
 
+Serves both the user storefront and the admin panel. Must remain backward compatible during the storefront migration.
+
 ## frontend
 
-Contains:
+Status: FROZEN. Reference implementation only.
+
+Do not add new features here. Do not fix bugs here unless they block understanding the business logic being migrated.
+
+Use this project only to:
+
+* Study existing business logic before implementing it in user.
+* Compare functionality during migration.
+* Confirm expected behavior of a feature before rebuilding it.
+
+Never build new customer-facing work in this project again.
+
+## user
+
+Status: ACTIVE. Final production customer storefront.
+
+All new customer-facing development happens here, and only here.
+
+Contains (target state, being migrated from frontend):
 
 * Customer website
 * Product pages
@@ -77,6 +98,8 @@ Contains:
 * Checkout
 * Vendor profiles
 * Marketplace pages
+
+When a feature already exists in frontend, study it first, then implement it here using cleaner architecture, reusable components and modern patterns. Never copy-paste code directly from frontend into user.
 
 ## admin
 
@@ -88,6 +111,8 @@ Contains:
 * Product approval
 * Order management
 * Customer management
+
+Continues to serve both frontend (legacy, read-only usage) and user during the migration.
 
 ---
 

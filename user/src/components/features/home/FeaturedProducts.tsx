@@ -5,10 +5,12 @@ import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { useProductStore } from '@/store/product.store'; // ✅ Correct path
+import { useCartStore } from '@/store/cart.store';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 const FeaturedProducts = () => {
   const { featuredProducts, isLoading, fetchFeaturedProducts } = useProductStore();
+  const addToCart = useCartStore((state) => state.addToCart);
 
   useEffect(() => {
     fetchFeaturedProducts();
@@ -49,16 +51,7 @@ const FeaturedProducts = () => {
         />
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {featuredProducts.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-              onWishlistToggle={(id) => {
-                console.log('Toggle wishlist', id);
-              }}
-              onAddToCart={(id) => {
-                console.log('Add to cart', id);
-              }}
-            />
+            <ProductCard key={product._id} product={product} onAddToCart={() => addToCart(product)} />
           ))}
         </div>
       </Container>

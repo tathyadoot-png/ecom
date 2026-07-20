@@ -14,6 +14,11 @@ import {
   updateCartItem,
 } from "./cart.service";
 
+import {
+  addToCartSchema,
+  updateCartItemSchema,
+} from "./cart.validation";
+
 export const getCart =
   asyncHandler(
     async (
@@ -42,7 +47,10 @@ export const addItem =
       const {
         productId,
         quantity,
-      } = req.body;
+      } =
+        addToCartSchema.parse(
+          req.body
+        );
 
       const cart =
         await addToCart(
@@ -65,11 +73,18 @@ export const updateItem =
       req: AuthRequest,
       res: Response
     ) => {
+      const {
+        quantity,
+      } =
+        updateCartItemSchema.parse(
+          req.body
+        );
+
       const cart =
         await updateCartItem(
           req.user._id,
           req.params.productId as string,
-          req.body.quantity
+          quantity
         );
 
       return successResponse(

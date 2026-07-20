@@ -139,7 +139,10 @@ export const getMyOrders =
   };
 
 export const getSingleOrder =
-  async (orderId: string) => {
+  async (
+    orderId: string,
+    requestingUser: any
+  ) => {
     const order =
       await Order.findById(
         orderId
@@ -159,9 +162,22 @@ export const getSingleOrder =
       );
     }
 
-    return order;
+    const isOwner =
+      order.user._id.toString() ===
+      requestingUser._id.toString();
 
-    
+    const isAdmin =
+      requestingUser.role === "ADMIN" ||
+      requestingUser.role === "SUPER_ADMIN";
+
+    if (!isOwner && !isAdmin) {
+      throw new ApiError(
+        403,
+        "You are not allowed to view this order"
+      );
+    }
+
+    return order;
   };
 
 

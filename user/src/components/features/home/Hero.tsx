@@ -1,24 +1,24 @@
 'use client';
 
+import Link from 'next/link';
+import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
-import Image from 'next/image';
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[90vh] overflow-hidden bg-background">
+    <section className="relative min-h-[90vh] overflow-hidden ">
       {/* Background Image - full bleed, no card */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/hero/herobg.png
-          " // Placeholder path – you'll replace with your actual image
+          src="/hero/herobg.png"
           alt="Indian artisan at work"
           fill
           priority
           className="object-cover object-center"
         />
         {/* Subtle overlay to enhance text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent" />
+        
       </div>
 
       <Container className="relative z-10 flex h-full min-h-[90vh] items-center">
@@ -40,12 +40,16 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-wrap gap-4 pt-4">
-            <Button variant="primary" size="large">
-              Shop Now
-            </Button>
-            <Button variant="outline" size="large">
-              Explore Collections
-            </Button>
+            <Link href="/products">
+              <Button variant="primary" size="large">
+                Shop Now
+              </Button>
+            </Link>
+            <Link href="/categories">
+              <Button variant="outline" size="large">
+                Explore Categories
+              </Button>
+            </Link>
           </div>
 
           {/* Trust Strip mini – shown on hero for quick assurance */}

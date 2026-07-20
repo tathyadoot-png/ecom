@@ -31,9 +31,71 @@ export const updateProfileService =
         data.avatar;
     }
 
-    if (data.address) {
-      user.address =
-        data.address;
+    // The client sends flat address fields (fullName, phone, address,
+    // city, state, country, postalCode), not a pre-built address
+    // object, so they're assembled here onto the existing subdocument
+    // rather than replacing it wholesale.
+    const addressFields = [
+      "fullName",
+      "phone",
+      "address",
+      "city",
+      "state",
+      "country",
+      "postalCode",
+    ];
+
+    const hasAddressUpdate =
+      addressFields.some(
+        (field) =>
+          data[field] !==
+          undefined
+      );
+
+    if (hasAddressUpdate) {
+      user.address = {
+        fullName:
+          data.fullName ??
+          user.address
+            ?.fullName ??
+          "",
+
+        phone:
+          data.phone ??
+          user.address
+            ?.phone ??
+          "",
+
+        address:
+          data.address ??
+          user.address
+            ?.address ??
+          "",
+
+        city:
+          data.city ??
+          user.address
+            ?.city ??
+          "",
+
+        state:
+          data.state ??
+          user.address
+            ?.state ??
+          "",
+
+        country:
+          data.country ??
+          user.address
+            ?.country ??
+          "India",
+
+        postalCode:
+          data.postalCode ??
+          user.address
+            ?.postalCode ??
+          "",
+      };
     }
 
     await user.save();

@@ -11,10 +11,13 @@ export const productService = {
   },
 
   getProductBySlug: async (slug: string) => {
-    const { data } = await api.get<ApiResponse<Product>>(`/products/${slug}`);
+    const { data } = await api.get<ApiResponse<Product>>(`/products/slug/${slug}`);
     return data.data;
   },
 
+  // Backend route is restricted to VENDOR/ADMIN/SUPER_ADMIN — do not call
+  // this from customer-facing pages, it will 403. Use getProductBySlug
+  // for the public product detail page.
   getProductById: async (id: string) => {
     const { data } = await api.get<ApiResponse<Product>>(`/products/id/${id}`);
     return data.data;

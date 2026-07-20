@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Manrope } from "next/font/google";
+import { Providers } from "@/components/providers/Providers";
+import { SITE } from "@/constants/site";
 import "./globals.css";
 
 const heading = DM_Serif_Display({
@@ -14,6 +16,7 @@ const body = Manrope({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
   title: {
     default: "Indian Artisan Marketplace",
     template: "%s | Indian Artisan Marketplace",
@@ -32,7 +35,7 @@ export default function RootLayout({
       <body
         className={`${heading.variable} ${body.variable}`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -1,21 +1,25 @@
 // types/auth.types.ts
+export interface Address {
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+}
+
+export type UserRole = 'CUSTOMER' | 'ADMIN' | 'VENDOR' | 'SUPER_ADMIN';
+
 export interface User {
   _id: string;
   name: string;
   email: string;
   avatar: string;
-  role: 'CUSTOMER' | 'ADMIN' | 'VENDOR' | 'SUPER_ADMIN';
+  role: UserRole;
   isBlocked: boolean;
   storeId?: string | null;
-  address?: {
-    fullName?: string;
-    phone?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    country?: string;
-    postalCode?: string;
-  };
+  address?: Address;
   createdAt: string;
   updatedAt: string;
 }

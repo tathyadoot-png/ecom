@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ProductGrid } from './ProductGrid';
-import { ProductFilters } from './ProductFilters';
+import { ProductFilterSidebar } from './ProductFilterSidebar';
 import { ProductSort } from './ProductSort';
 import { Pagination } from '@/components/ui/Pagination';
 import { Product, ProductsResponse, ProductFilters as ProductFiltersType } from '@/types/product.types';
@@ -102,7 +102,7 @@ const ProductListingClient = ({
           <div className="flex flex-col gap-6 lg:flex-row">
             {/* Sidebar Filters */}
             <aside className="w-full lg:w-64 flex-shrink-0">
-              <ProductFilters
+              <ProductFilterSidebar
                 currentFilters={filters}
                 onFilterChange={handleFilterChange}
               />

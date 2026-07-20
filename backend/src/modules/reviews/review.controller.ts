@@ -13,6 +13,8 @@ import {
   deleteReviewService,
 } from "./review.service";
 
+import { createReviewSchema } from "./review.validation";
+
 
 
 export const createReview =
@@ -25,12 +27,15 @@ export const createReview =
         productId,
         rating,
         comment,
-      } = req.body;
+      } =
+        createReviewSchema.parse(
+          req.body
+        );
 
       await createReviewService(
         req.user._id,
         productId,
-        Number(rating),
+        rating,
         comment
       );
 

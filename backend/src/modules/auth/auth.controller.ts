@@ -10,6 +10,8 @@ import {
 import {
   loginSchema,
   registerSchema,
+  updateProfileSchema,
+  changePasswordSchema,
 } from "./auth.validation";
 
 import { asyncHandler } from "../../utils/asyncHandler";
@@ -119,6 +121,11 @@ export const updateProfile =
       req: AuthRequest,
       res: Response
     ) => {
+      const validatedData =
+        updateProfileSchema.parse(
+          req.body
+        );
+
       let avatar = "";
 
       if (
@@ -134,7 +141,7 @@ export const updateProfile =
         await updateProfileService(
           req.user._id,
          {
-  ...req.body,
+  ...validatedData,
 
   avatar:
     avatar ||
@@ -159,7 +166,10 @@ export const changePassword =
       const {
         currentPassword,
         newPassword,
-      } = req.body;
+      } =
+        changePasswordSchema.parse(
+          req.body
+        );
 
       await changePasswordService(
         req.user._id,

@@ -16,7 +16,7 @@ export const authService = {
     email: string,
     password: string
   ) =>
-    api.post("/auth/register", {
+    api.post<ApiResponse<User>>("/auth/register", {
       name,
       email,
       password,
@@ -27,4 +27,17 @@ export const authService = {
 
   getCurrentUser: () =>
     api.get<ApiResponse<User>>("/auth/me"),
+
+  // multipart/form-data, not JSON — the backend routes this through
+  // multer (avatarUpload.single('avatar')) even when no file is sent.
+  updateProfile: (formData: FormData) =>
+    api.patch<ApiResponse<User>>("/auth/profile", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+
+  changePassword: (currentPassword: string, newPassword: string) =>
+    api.patch<ApiResponse<null>>("/auth/change-password", {
+      currentPassword,
+      newPassword,
+    }),
 };

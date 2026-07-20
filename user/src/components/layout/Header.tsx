@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { toast } from 'sonner';
 import {
   Search,
   User,
   Heart,
   ShoppingBag,
+  Package,
   Menu,
   X,
   Phone,
@@ -16,18 +19,45 @@ import {
 import { Container } from '@/components/ui/Container';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { CountBadge } from '@/components/ui/CountBadge';
+import { LogoutButton } from '@/components/auth/LogoutButton';
+import { cn } from '@/lib/utils';
 import { useCategoryStore } from '@/store/category.store';
+import { useAuthStore } from '@/store/auth.store';
+import { useCartStore } from '@/store/cart.store';
+import { useWishlistStore } from '@/store/wishlist.store';
+
+// Only routes that actually exist in this storefront — every entry
+// here must have a real page behind it (see Production Stabilization
+// Pass: the previous nav had 6 links to pages that don't exist).
+const NAV_LINKS = [
+  { label: 'Home', href: '/' },
+  { label: 'Shop', href: '/products' },
+  { label: 'Categories', href: '/categories' },
+];
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { categories, fetchCategories } = useCategoryStore();
+  const pathname = usePathname();
+  const { fetchCategories } = useCategoryStore();
+  const { user } = useAuthStore();
+  const cartCount = useCartStore((state) => state.totalItems());
+  const wishlistCount = useWishlistStore((state) => state.totalItems());
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
+  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+
+  // Profile isn't built yet — same honest-placeholder pattern used
+  // for Buy Now/Checkout/View Orders, rather than a link to a 404.
+  const handleProfileClick = () => {
+    toast.info('Profile is coming soon — check back shortly!');
+  };
+
   return (
-    <header className="bg-cream border-b border-warm-beige/30">
+    <header className="sticky top-0 z-40 bg-cream border-b border-warm-beige/30">
       {/* Top Bar */}
       <div className="border-b border-warm-beige/20 py-1.5 text-xs text-text/60 hidden md:block">
         <Container>
@@ -76,6 +106,7 @@ const Header = () => {
           <div className="hidden flex-1 max-w-lg md:block">
             <div className="relative">
               <Input
+                aria-label="Search"
                 placeholder="Search for products, categories..."
                 className="pl-10 bg-cream/80 border-warm-beige/40 rounded-full"
                 leftIcon={<Search className="h-4 w-4 text-text/40" />}
@@ -85,24 +116,54 @@ const Header = () => {
 
           {/* Right Icons */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link href="/account" className="text-text/70 hover:text-primary transition-colors">
-              <User className="h-5 w-5" />
-            </Link>
-            <Link href="/wishlist" className="text-text/70 hover:text-primary transition-colors">
+            {user ? (
+              <button
+                type="button"
+                onClick={handleProfileClick}
+                aria-label="Profile"
+                className="text-text/70 hover:text-primary transition-colors"
+              >
+                <User className="h-5 w-5" />
+              </button>
+            ) : (
+              <Link href="/login" aria-label="Login" className="text-text/70 hover:text-primary transition-colors">
+                <User className="h-5 w-5" />
+              </Link>
+            )}
+            {user && (
+              <Link href="/orders" aria-label="My Orders" className="text-text/70 hover:text-primary transition-colors">
+                <Package className="h-5 w-5" />
+              </Link>
+            )}
+            {user && <LogoutButton />}
+            <Link
+              href="/wishlist"
+              aria-label="Wishlist"
+              className="relative text-text/70 hover:text-primary transition-colors"
+            >
               <Heart className="h-5 w-5" />
+              <CountBadge count={wishlistCount} />
             </Link>
-            <Link href="/cart" className="text-text/70 hover:text-primary transition-colors relative">
+            <Link
+              href="/cart"
+              aria-label="Cart"
+              className="relative text-text/70 hover:text-primary transition-colors"
+            >
               <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-cream">
-                0
-              </span>
+              <CountBadge count={cartCount} />
             </Link>
-            <Button variant="outline" size="small" className="hidden sm:flex">
-              Login / Register
-            </Button>
+            {!user && (
+              <Link href="/login" className="hidden sm:flex">
+                <Button variant="outline" size="small">
+                  Login / Register
+                </Button>
+              </Link>
+            )}
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMobileMenuOpen}
               className="block md:hidden text-text/70 hover:text-primary transition-colors"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -112,30 +173,18 @@ const Header = () => {
 
         {/* Category Navigation - desktop */}
         <nav className="hidden md:flex items-center gap-6 py-2 text-sm font-medium text-text/80 border-t border-warm-beige/20">
-          <Link href="/" className="hover:text-primary transition-colors">
-            Home
-          </Link>
-          <Link href="/shop" className="hover:text-primary transition-colors">
-            Shop
-          </Link>
-          <Link href="/collections" className="hover:text-primary transition-colors">
-            Collections
-          </Link>
-          <Link href="/artisans" className="hover:text-primary transition-colors">
-            Artisans
-          </Link>
-          <Link href="/stories" className="hover:text-primary transition-colors">
-            Stories
-          </Link>
-          <Link href="/offers" className="hover:text-primary transition-colors">
-            Offers
-          </Link>
-          <Link href="/about" className="hover:text-primary transition-colors">
-            About Us
-          </Link>
-          <Link href="/contact" className="hover:text-primary transition-colors">
-            Contact Us
-          </Link>
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                'transition-colors hover:text-primary',
+                isActive(link.href) && 'text-primary font-semibold'
+              )}
+            >
+              {link.label}
+            </Link>
+          ))}
           <div className="ml-auto flex items-center gap-1 text-xs text-text/50">
             <span className="font-heading text-accent">✦</span> Marketplace
           </div>
@@ -147,23 +196,46 @@ const Header = () => {
         <div className="md:hidden border-t border-warm-beige/20 bg-cream p-4 space-y-4">
           <div className="relative">
             <Input
+              aria-label="Search"
               placeholder="Search..."
-              className="pl-10 bg-white"
+              className="pl-10 bg-cream"
               leftIcon={<Search className="h-4 w-4 text-text/40" />}
             />
           </div>
           <div className="flex flex-col space-y-2">
-            <Link href="/" className="text-text hover:text-primary transition-colors">Home</Link>
-            <Link href="/products" className="text-text hover:text-primary transition-colors">Shop</Link>
-            <Link href="/collections" className="text-text hover:text-primary transition-colors">Collections</Link>
-            <Link href="/artisans" className="text-text hover:text-primary transition-colors">Artisans</Link>
-            <Link href="/stories" className="text-text hover:text-primary transition-colors">Stories</Link>
-            <Link href="/offers" className="text-text hover:text-primary transition-colors">Offers</Link>
-            <Link href="/about" className="text-text hover:text-primary transition-colors">About Us</Link>
-            <Link href="/contact" className="text-text hover:text-primary transition-colors">Contact Us</Link>
-            <Button variant="outline" size="small" fullWidth className="mt-2">
-              Login / Register
-            </Button>
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  'text-text hover:text-primary transition-colors',
+                  isActive(link.href) && 'text-primary font-semibold'
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {user ? (
+              <>
+                <Link
+                  href="/orders"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-text hover:text-primary transition-colors"
+                >
+                  My Orders
+                </Link>
+                <Button variant="outline" size="small" fullWidth className="mt-2" onClick={handleProfileClick}>
+                  My Profile
+                </Button>
+              </>
+            ) : (
+              <Link href="/login" className="mt-2" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button variant="outline" size="small" fullWidth>
+                  Login / Register
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       )}

@@ -23,6 +23,14 @@ export enum PaymentMethod {
   RAZORPAY = "RAZORPAY",
 }
 
+export enum PaymentStatus {
+  PENDING = "PENDING",
+
+  PAID = "PAID",
+
+  FAILED = "FAILED",
+}
+
 export interface IOrderItem {
   product: mongoose.Types.ObjectId;
 
@@ -63,7 +71,7 @@ export interface IOrder
 
   paymentMethod: PaymentMethod;
 
-  paymentStatus: string;
+  paymentStatus: PaymentStatus;
 
   isDelivered: boolean;
 
@@ -189,7 +197,13 @@ const orderSchema =
       paymentStatus: {
         type: String,
 
-        default: "PENDING",
+        enum:
+          Object.values(
+            PaymentStatus
+          ),
+
+        default:
+          PaymentStatus.PENDING,
       },
 
       isDelivered: {

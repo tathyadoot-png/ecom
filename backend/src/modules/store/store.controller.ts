@@ -22,13 +22,23 @@ import {
   updateStoreStatus,
 } from "./store.service";
 
+import {
+  createStoreSchema,
+  updateStoreSchema,
+} from "./store.validation";
+
 export const createStoreController =
   asyncHandler(
     async (
       req: AuthRequest,
       res: Response
     ) => {
-    const files =
+    const validatedData =
+  createStoreSchema.parse(
+    req.body
+  );
+
+const files =
   req.files as any;
 
 const logo =
@@ -42,7 +52,7 @@ const banner =
 const store =
   await createStore(
     {
-      ...req.body,
+      ...validatedData,
       logo,
       banner,
     },
@@ -139,6 +149,11 @@ export const updateStoreStatusController =
       res: Response
     ) => {
 
+      const validatedData =
+        updateStoreSchema.parse(
+          req.body
+        );
+
       const files =
         req.files as any;
 
@@ -154,7 +169,7 @@ export const updateStoreStatusController =
         await updateStore(
           req.user._id,
           {
-            ...req.body,
+            ...validatedData,
 
             ...(logo && {
               logo,

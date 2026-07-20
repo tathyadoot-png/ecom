@@ -32,9 +32,20 @@ export const getUserByIdService =
 
 export const updateUserRoleService =
   async (
+    requestingUser: any,
     userId: string,
-role: UserRole
+    role: UserRole
   ) => {
+    if (
+      requestingUser._id.toString() ===
+      userId
+    ) {
+      throw new ApiError(
+        403,
+        "You cannot change your own role"
+      );
+    }
+
     const user =
       await User.findById(
         userId
@@ -44,6 +55,21 @@ role: UserRole
       throw new ApiError(
         404,
         "User not found"
+      );
+    }
+
+    const touchesSuperAdmin =
+      role === UserRole.SUPER_ADMIN ||
+      user.role === UserRole.SUPER_ADMIN;
+
+    if (
+      touchesSuperAdmin &&
+      requestingUser.role !==
+        UserRole.SUPER_ADMIN
+    ) {
+      throw new ApiError(
+        403,
+        "Only a super admin can grant or revoke the super admin role"
       );
     }
 

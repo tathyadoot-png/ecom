@@ -21,6 +21,7 @@ import {
 import {
   getAllOrdersAdminService,
   updateOrderStatusService,
+  updateVendorOrderStatusService,
 } from "./order.service";
 
 
@@ -72,12 +73,13 @@ export const getMine =
 export const getOne =
   asyncHandler(
     async (
-      req: Request,
+      req: AuthRequest,
       res: Response
     ) => {
       const order =
         await getSingleOrder(
-          req.params.id as string
+          req.params.id as string,
+          req.user
         );
 
       return successResponse(
@@ -155,7 +157,8 @@ export const updateOrderStatus =
     ) => {
 
       const order =
-        await updateOrderStatusService(
+        await updateVendorOrderStatusService(
+          req.user._id,
           req.params.id as string,
           req.body.status
         );

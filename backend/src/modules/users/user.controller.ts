@@ -3,6 +3,8 @@ import {
   Response,
 } from "express";
 
+import { AuthRequest } from "../../middlewares/auth.middleware";
+
 import { asyncHandler } from "../../utils/asyncHandler";
 
 import { successResponse } from "../../utils/response";
@@ -13,6 +15,8 @@ import {
   toggleBlockUserService,
   updateUserRoleService,
 } from "./user.service";
+
+import { updateUserRoleSchema } from "./user.validation";
 
 export const getAllUsers =
   asyncHandler(
@@ -53,13 +57,19 @@ export const getUserById =
 export const updateUserRole =
   asyncHandler(
     async (
-      req: Request,
+      req: AuthRequest,
       res: Response
     ) => {
+      const validatedData =
+        updateUserRoleSchema.parse(
+          req.body
+        );
+
       const user =
         await updateUserRoleService(
+          req.user,
           req.params.id as string,
-          req.body.role
+          validatedData.role
         );
 
       return successResponse(

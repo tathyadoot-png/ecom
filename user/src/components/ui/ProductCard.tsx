@@ -2,18 +2,20 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, ShoppingBag, Star } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Price } from '@/components/ui/Price';
 import { Button } from '@/components/ui/Button';
+import { StarRating } from '@/components/ui/StarRating';
+import { WishlistButton } from '@/components/ui/WishlistButton';
+import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types/product.types';
 
 interface ProductCardProps {
   product: Product;
   variant?: 'default' | 'compact' | 'featured';
-  onWishlistToggle?: (productId: string) => void;
   onAddToCart?: (productId: string) => void;
   className?: string;
 }
@@ -21,7 +23,6 @@ interface ProductCardProps {
 const ProductCard = ({
   product,
   variant = 'default',
-  onWishlistToggle,
   onAddToCart,
   className,
 }: ProductCardProps) => {
@@ -44,7 +45,7 @@ const ProductCard = ({
   const hasSale = salePrice && salePrice > 0 && salePrice < price;
 
   // Determine image
-  const imageUrl = images && images.length > 0 ? images[0] : '/images/fallback-product.jpg';
+  const imageUrl = images && images.length > 0 ? images[0] : null;
   const categoryName = typeof category === 'object' ? category.name : 'Category';
 
   // Responsive sizing based on variant
@@ -61,15 +62,19 @@ const ProductCard = ({
       )}
     >
       {/* Image Container */}
-      <Link href={`/product/${slug}`} className="relative block overflow-hidden rounded-lg">
+      <Link href={`/products/${slug}`} className="relative block overflow-hidden rounded-lg">
         <div className={`relative w-full ${imageSize}`}>
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          ) : (
+            <ImagePlaceholder className="absolute inset-0" />
+          )}
         </div>
 
         {/* Badges */}
@@ -80,16 +85,7 @@ const ProductCard = ({
         </div>
 
         {/* Wishlist Button */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            onWishlistToggle?.(_id);
-          }}
-          className="absolute right-3 top-3 rounded-full bg-cream/80 p-2 text-text/50 backdrop-blur-sm transition-all hover:bg-cream hover:text-primary focus:outline-none focus:ring-2 focus:ring-accent"
-          aria-label="Add to wishlist"
-        >
-          <Heart className="h-4 w-4" />
-        </button>
+        <WishlistButton product={product} variant="card" className="absolute right-3 top-3" />
       </Link>
 
       {/* Content */}
@@ -100,7 +96,7 @@ const ProductCard = ({
         </span>
 
         {/* Title */}
-        <Link href={`/product/${slug}`} className="block">
+        <Link href={`/products/${slug}`} className="block">
           <h3 className="font-body text-base font-medium leading-snug text-text transition-colors hover:text-primary line-clamp-2">
             {title}
           </h3>
@@ -108,19 +104,7 @@ const ProductCard = ({
 
         {/* Rating */}
         <div className="flex items-center gap-1.5">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={cn(
-                  'h-3.5 w-3.5',
-                  i < Math.floor(averageRating || 0)
-                    ? 'fill-accent text-accent'
-                    : 'text-warm-beige'
-                )}
-              />
-            ))}
-          </div>
+          <StarRating rating={averageRating} />
           {numReviews > 0 && (
             <span className="text-xs text-text/50 font-body">({numReviews})</span>
           )}
@@ -128,7 +112,7 @@ const ProductCard = ({
 
         {/* Price */}
         <Price
-          amount={price}
+          amount={hasSale ? salePrice : price}
           compareAt={hasSale ? price : undefined}
           currency="₹"
           size={variant === 'compact' ? 'sm' : 'md'}

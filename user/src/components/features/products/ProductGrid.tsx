@@ -1,5 +1,6 @@
 import { Product } from '@/types/product.types';
 import { ProductCard } from '@/components/ui/ProductCard';
+import { useCartStore } from '@/store/cart.store';
 
 interface ProductGridProps {
   products: Product[];
@@ -7,6 +8,7 @@ interface ProductGridProps {
 }
 
 const ProductGrid = ({ products, columns = 4 }: ProductGridProps) => {
+  const addToCart = useCartStore((state) => state.addToCart);
   if (!products || products.length === 0) {
     return (
       <div className="py-12 text-center">
@@ -24,12 +26,7 @@ const ProductGrid = ({ products, columns = 4 }: ProductGridProps) => {
   return (
     <div className={`grid gap-6 ${colClasses[columns]}`}>
       {products.map((product) => (
-        <ProductCard
-          key={product._id}
-          product={product}
-          onWishlistToggle={(id) => console.log('Toggle wishlist', id)}
-          onAddToCart={(id) => console.log('Add to cart', id)}
-        />
+        <ProductCard key={product._id} product={product} onAddToCart={() => addToCart(product)} />
       ))}
     </div>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { CategoryCard } from '@/components/ui/CategoryCard';
@@ -59,9 +60,11 @@ const CategoryShowcase = () => {
         </div>
         {categories.length > 6 && (
           <div className="mt-10 text-center">
-            <Button variant="outline" size="medium">
-              View All Categories
-            </Button>
+            <Link href="/categories">
+              <Button variant="outline" size="medium">
+                View All Categories
+              </Button>
+            </Link>
           </div>
         )}
       </Container>
