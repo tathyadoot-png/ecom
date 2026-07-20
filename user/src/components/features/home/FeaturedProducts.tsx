@@ -18,7 +18,7 @@ const FeaturedProducts = () => {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-background">
+      <section className="py-20 bg-background md:py-28">
         <Container>
           <SectionHeading
             title="Featured Treasures"
@@ -43,13 +43,13 @@ const FeaturedProducts = () => {
   }
 
   return (
-    <section className="py-16 bg-background">
+    <section className="py-20 bg-background md:py-28">
       <Container>
         <SectionHeading
           title="Featured Treasures"
           subtitle="Handpicked pieces that tell a story"
         />
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {featuredProducts.map((product) => (
             <ProductCard key={product._id} product={product} onAddToCart={() => addToCart(product)} />
           ))}

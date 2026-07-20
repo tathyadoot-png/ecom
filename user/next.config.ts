@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -11,6 +12,13 @@ const nextConfig = {
       // Add other hostnames here if needed (e.g., 'images.unsplash.com')
     ],
   },
+  // babel-plugin-react-compiler was already installed but never
+  // switched on — this is the single flag that activates it (a
+  // top-level option as of Next 16, not under `experimental`).
+  // Automatic memoization across the app is preferred here over
+  // hand-placed React.memo/useCallback, which the RULES for this
+  // phase explicitly caution against overusing.
+  reactCompiler: true,
 };
 
-module.exports = nextConfig;
+export default nextConfig;

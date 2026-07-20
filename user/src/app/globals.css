@@ -1,24 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
-  --color-primary: #8B2C1D;
-  --color-accent: #D4A24C;
-  --color-background: #F7F1E8;
-  --color-text: #2B2118;
-  --color-forest: #3A5A40;
-  --color-cream: #FDF8F2;
-  --color-warm-beige: #E8DCC8;
-  --color-light-gold: #E8D5A3;
+  /* Colors — warm, muted, editorial. Token names are unchanged from
+     the previous palette on purpose: every component already
+     consistently uses these semantic classes (bg-primary, text-accent,
+     bg-cream, ...), so re-tuning the values here re-colors the entire
+     storefront in one place rather than touching class names in every
+     file. `terracotta` is the one new addition — used sparingly as a
+     secondary accent (sale emphasis, hover warmth) alongside the
+     existing five. */
+  --color-primary: #6B1D16;
+  --color-terracotta: #B5502E;
+  --color-accent: #BF9B52;
+  --color-background: #F8F3E8;
+  --color-text: #241C15;
+  --color-forest: #5F6B45;
+  --color-cream: #FBF6EC;
+  --color-warm-beige: #E6D8C0;
+  --color-light-gold: #E4D0A0;
 
   /* Typography */
-  --font-heading: DM Serif Display, serif;
-  --font-body: Manrope, sans-serif;
+  --font-heading: "Cormorant Garamond", serif;
+  --font-body: "Inter", sans-serif;
 
-  /* Border Radius */
-  --radius-card: 28px;
+  /* Border Radius — refined rather than bubbly: architectural corners
+     on cards/inputs, full pill on buttons/badges. */
+  --radius-card: 20px;
   --radius-button: 9999px;
-  --radius-input: 20px;
+  --radius-input: 14px;
 
   /* Spacing (luxury, generous) */
   --spacing: 4px;
@@ -32,10 +41,12 @@
   --spacing-80: 80px;
   --spacing-120: 120px;
 
-  /* Shadows (soft, warm) */
-  --shadow-soft: 0 4px 24px rgba(43, 33, 24, 0.06);
-  --shadow-medium: 0 8px 40px rgba(43, 33, 24, 0.08);
-  --shadow-hover: 0 12px 56px rgba(43, 33, 24, 0.12);
+  /* Shadows — soft and diffused, warm-toned (never pure black) so
+     elevation reads as "floating," not "boxed." */
+  --shadow-soft: 0 2px 16px rgba(36, 28, 21, 0.05);
+  --shadow-medium: 0 8px 32px rgba(36, 28, 21, 0.08);
+  --shadow-hover: 0 20px 48px rgba(36, 28, 21, 0.14);
+  --shadow-lift: 0 28px 64px rgba(36, 28, 21, 0.18);
 }
 
 /* Base styles */
@@ -50,9 +61,15 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
   }
 
-  /* Optional: custom scrollbar */
+  body {
+    letter-spacing: -0.005em;
+  }
+
+  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -62,5 +79,62 @@
   ::-webkit-scrollbar-thumb {
     background: var(--color-accent);
     border-radius: 4px;
+  }
+}
+
+/* Small, named animations reused wherever a fade/slide-in is needed
+   (mobile menu, dropdowns) instead of inlining keyframes per-component. */
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in-down {
+    animation: fade-in-down 0.25s ease-out;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out;
+  }
+  .animate-shimmer {
+    background-image: linear-gradient(90deg, var(--color-warm-beige) 0%, var(--color-cream) 50%, var(--color-warm-beige) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+}
+
+/* Motion is used sparingly throughout (image zoom, card lift, fades) —
+   this is the one place it's turned off globally for anyone who has
+   asked their OS to reduce it, rather than handling it per-component. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

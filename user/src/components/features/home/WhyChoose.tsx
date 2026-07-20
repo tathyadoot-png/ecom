@@ -56,13 +56,13 @@ const whyItems: WhyItem[] = [
 
 const WhyChoose = () => {
   return (
-    <section className="py-16 bg-cream">
+    <section className="py-20 bg-cream md:py-28">
       <Container>
         <SectionHeading
           title="Why Choose Indian Artisan"
           subtitle="We believe in creating a meaningful connection between you and the artisans"
         />
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {whyItems.map((item, index) => (
             <Card
               key={index}
@@ -70,11 +70,11 @@ const WhyChoose = () => {
               hoverable
               className="flex flex-col items-center text-center"
             >
-              <div className="mb-4 rounded-full bg-warm-beige/30 p-4 text-accent">
-                <item.icon className="h-8 w-8" />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-warm-beige/25 text-accent">
+                <item.icon className="h-7 w-7" />
               </div>
-              <h4 className="font-heading text-lg font-medium text-text">{item.title}</h4>
-              <p className="mt-2 text-sm text-text/60 font-body leading-relaxed">{item.description}</p>
+              <h4 className="font-heading text-xl font-medium text-text">{item.title}</h4>
+              <p className="mt-2 font-body text-sm leading-relaxed text-text/60">{item.description}</p>
             </Card>
           ))}
         </div>

@@ -21,13 +21,13 @@ const CategoryShowcase = () => {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-cream">
+      <section className="bg-cream py-20 md:py-28">
         <Container>
           <SectionHeading
             title="Shop by Categories"
             subtitle="Discover treasures from across India"
           />
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} variant="rect" className="h-72 w-full rounded-card" />
             ))}
@@ -47,19 +47,19 @@ const CategoryShowcase = () => {
     .slice(0, 6);
 
   return (
-    <section className="py-16 bg-cream">
+    <section className="bg-cream py-20 md:py-28">
       <Container>
         <SectionHeading
           title="Shop by Categories"
           subtitle="Discover treasures from across India"
         />
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {displayCategories.map((category) => (
             <CategoryCard key={category._id} category={category} variant="default" />
           ))}
         </div>
         {categories.length > 6 && (
-          <div className="mt-10 text-center">
+          <div className="mt-14 text-center">
             <Link href="/categories">
               <Button variant="outline" size="medium">
                 View All Categories

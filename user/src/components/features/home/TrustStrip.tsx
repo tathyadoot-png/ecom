@@ -40,16 +40,16 @@ const trustItems = [
 
 const TrustStrip = () => {
   return (
-    <section className="bg-cream py-12 border-y border-warm-beige/20">
+    <section className="border-y border-warm-beige/20 bg-cream py-10">
       <Container>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           {trustItems.map((item, index) => (
             <div key={index} className="flex flex-col items-center text-center">
-              <div className="mb-3 rounded-full bg-warm-beige/20 p-3 text-accent">
-                <item.icon className="h-6 w-6" />
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-warm-beige/20 text-accent">
+                <item.icon className="h-5 w-5" />
               </div>
-              <h4 className="font-heading text-sm font-medium text-text">{item.label}</h4>
-              <p className="text-xs text-text/50 font-body">{item.description}</p>
+              <h4 className="font-heading text-base font-medium text-text">{item.label}</h4>
+              <p className="font-body text-xs text-text/50">{item.description}</p>
             </div>
           ))}
         </div>

@@ -31,10 +31,10 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
       aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
       aria-pressed={isWishlisted}
       className={cn(
-        'flex items-center justify-center rounded-full backdrop-blur-sm transition-all focus:outline-none focus:ring-2 focus:ring-accent',
+        'flex items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent active:scale-95',
         variant === 'card'
-          ? 'bg-cream/80 p-2 text-text/50 hover:bg-cream hover:text-primary'
-          : 'h-12 w-12 border-2 border-warm-beige bg-cream text-text/60 hover:border-primary hover:text-primary',
+          ? 'h-9 w-9 bg-cream/85 text-text/50 shadow-soft hover:bg-cream hover:text-primary'
+          : 'h-12 w-12 border border-warm-beige bg-cream text-text/60 hover:border-primary hover:text-primary',
         className
       )}
     >

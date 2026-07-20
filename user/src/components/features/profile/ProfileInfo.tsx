@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Camera } from 'lucide-react';
 import { toast } from 'sonner';
@@ -34,6 +34,15 @@ const ProfileInfo = ({ user }: ProfileInfoProps) => {
   const hasChanges = name !== user.name || avatarFile !== null;
 
   useUnsavedChangesGuard(hasChanges);
+
+  // Cancel/Save already revoke the preview URL explicitly — this
+  // covers navigating away mid-edit without either, which would
+  // otherwise leak the blob URL for the rest of the session.
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    };
+  }, [avatarPreview]);
 
   const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

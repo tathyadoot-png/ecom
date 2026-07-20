@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
+import { SHIMMER_DATA_URL } from '@/lib/imagePlaceholder';
 import { Category } from '@/types/category.types';
 
 interface CategoryBannerProps {
@@ -16,6 +17,8 @@ const CategoryBanner = ({ category, productCount }: CategoryBannerProps) => {
           alt={category.name}
           fill
           priority
+          placeholder="blur"
+          blurDataURL={SHIMMER_DATA_URL}
           className="object-cover"
           sizes="100vw"
         />

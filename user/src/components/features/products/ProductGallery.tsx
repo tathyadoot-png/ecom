@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
+import { SHIMMER_DATA_URL } from '@/lib/imagePlaceholder';
 
 interface ProductGalleryProps {
   images: string[];
@@ -23,6 +24,8 @@ const ProductGallery = ({ images, title }: ProductGalleryProps) => {
             alt={title}
             fill
             priority
+            placeholder="blur"
+            blurDataURL={SHIMMER_DATA_URL}
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 50vw"
           />

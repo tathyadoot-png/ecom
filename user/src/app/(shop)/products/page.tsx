@@ -1,6 +1,22 @@
+import type { Metadata } from 'next';
 import { productService } from '@/services/product.service';
 import { ProductFilters } from '@/types/product.types';
 import ProductListingClient from '@/components/features/products/ProductListingClient';
+import { SITE } from '@/constants/site';
+
+// Canonical stays fixed to the base path regardless of ?category=/
+// ?sort=/?page= — those are filter permutations of the same page,
+// not distinct content, so they shouldn't be treated as separate URLs.
+export const metadata: Metadata = {
+  title: 'Shop All Products',
+  description: 'Browse our full collection of handcrafted products from Indian artisans.',
+  alternates: { canonical: '/products' },
+  openGraph: {
+    title: 'Shop All Products',
+    description: 'Browse our full collection of handcrafted products from Indian artisans.',
+    url: `${SITE.url}/products`,
+  },
+};
 
 interface ProductsPageProps {
   searchParams: {

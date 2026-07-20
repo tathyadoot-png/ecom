@@ -1,23 +1,25 @@
 import { cva, type VariantProps } from 'class-variance-authority';
+import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { forwardRef } from 'react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-button font-body font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:pointer-events-none disabled:opacity-50',
+  'relative inline-flex items-center justify-center gap-2 rounded-button font-body font-medium tracking-wide transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-cream active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-cream hover:bg-primary/90 hover:shadow-hover',
-        secondary: 'bg-text text-cream hover:bg-text/90 hover:shadow-hover',
-        outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-cream',
-        ghost: 'text-text hover:bg-warm-beige/50',
-        accent: 'bg-accent text-text hover:bg-accent/90 hover:shadow-hover',
+        primary: 'bg-primary text-cream shadow-soft hover:bg-primary/90 hover:shadow-hover',
+        secondary: 'bg-text text-cream shadow-soft hover:bg-text/90 hover:shadow-hover',
+        outline:
+          'border border-primary/50 text-primary hover:border-primary hover:bg-primary hover:text-cream',
+        ghost: 'text-text hover:bg-warm-beige/40',
+        accent: 'bg-accent text-text shadow-soft hover:bg-accent/90 hover:shadow-hover',
       },
       size: {
-        small: 'px-4 py-2 text-sm',
-        medium: 'px-8 py-3 text-base',
-        large: 'px-12 py-4 text-lg',
-        icon: 'h-10 w-10 p-0',
+        small: 'px-5 py-2.5 text-sm',
+        medium: 'px-8 py-3.5 text-base',
+        large: 'px-10 py-4 text-base',
+        icon: 'h-11 w-11 p-0',
       },
       fullWidth: {
         true: 'w-full',
@@ -51,10 +53,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         {...props}
       >
-        {isLoading && <span className="mr-2 animate-spin">⏳</span>}
-        {leftIcon && <span className="mr-2">{leftIcon}</span>}
+        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : leftIcon}
         {children}
-        {rightIcon && <span className="ml-2">{rightIcon}</span>}
+        {!isLoading && rightIcon}
       </button>
     );
   }

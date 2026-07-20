@@ -16,7 +16,7 @@ const Skeleton = ({ className, variant = 'rect', width, height, ...props }: Skel
   return (
     <div
       className={cn(
-        'animate-pulse bg-warm-beige/60',
+        'animate-shimmer',
         variantClasses[variant],
         className
       )}

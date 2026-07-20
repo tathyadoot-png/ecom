@@ -8,7 +8,9 @@ import { CategorySidebar } from '@/components/features/categories/CategorySideba
 import { CategoryProductsClient } from '@/components/features/categories/CategoryProductsClient';
 import { categoryService } from '@/services/category.service';
 import { productService } from '@/services/product.service';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { ProductFilters } from '@/types/product.types';
+import { SITE } from '@/constants/site';
 
 interface CategoryDetailPageProps {
   params: { slug: string };
@@ -49,6 +51,12 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
       description,
       images: category.image ? [category.image] : undefined,
     },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: category.image ? [category.image] : undefined,
+    },
   };
 }
 
@@ -72,8 +80,37 @@ export default async function CategoryDetailPage({
 
   const initialData = await productService.getProducts(filters);
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE.url },
+      { '@type': 'ListItem', position: 2, name: 'Categories', item: `${SITE.url}/categories` },
+      { '@type': 'ListItem', position: 3, name: category.name, item: `${SITE.url}/categories/${category.slug}` },
+    ],
+  };
+
+  const collectionPageJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: category.name,
+    description: category.description || undefined,
+    url: `${SITE.url}/categories/${category.slug}`,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: initialData.pagination.total,
+      itemListElement: initialData.products.slice(0, 12).map((product, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${SITE.url}/products/${product.slug}`,
+      })),
+    },
+  };
+
   return (
     <>
+      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={collectionPageJsonLd} />
       <CategoryBanner category={category} productCount={initialData.pagination.total} />
 
       <Container className="py-10">

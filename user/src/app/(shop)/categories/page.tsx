@@ -3,12 +3,26 @@ import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { CategoryCard } from '@/components/ui/CategoryCard';
 import { categoryService } from '@/services/category.service';
+import { SITE } from '@/constants/site';
+
+const TITLE = 'All Categories';
+const DESCRIPTION = 'Browse every category of handcrafted Indian products.';
 
 export const metadata: Metadata = {
-  title: 'All Categories',
-  description: 'Browse every category of handcrafted Indian products.',
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: {
     canonical: '/categories',
+  },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: `${SITE.url}/categories`,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: TITLE,
+    description: DESCRIPTION,
   },
 };
 

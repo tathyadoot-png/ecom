@@ -1,16 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
 import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ProductGrid } from './ProductGrid';
 import { ProductFilterSidebar } from './ProductFilterSidebar';
 import { ProductSort } from './ProductSort';
 import { Pagination } from '@/components/ui/Pagination';
-import { Product, ProductsResponse, ProductFilters as ProductFiltersType } from '@/types/product.types';
-import { productService } from '@/services/product.service';
 import { ProductSkeletonGrid } from './ProductSkeletonGrid';
+import { useProductListing } from '@/hooks/useProductListing';
+import { Product, ProductsResponse, ProductFilters as ProductFiltersType } from '@/types/product.types';
 
 interface ProductListingClientProps {
   initialProducts: Product[];
@@ -18,75 +16,24 @@ interface ProductListingClientProps {
   initialFilters: ProductFiltersType;
 }
 
+const buildSearchParams = (filters: ProductFiltersType) => {
+  const params = new URLSearchParams();
+  if (filters.page && filters.page > 1) params.set('page', String(filters.page));
+  if (filters.limit) params.set('limit', String(filters.limit));
+  if (filters.search) params.set('search', filters.search);
+  if (filters.category) params.set('category', filters.category);
+  if (filters.featured) params.set('featured', 'true');
+  if (filters.sort && filters.sort !== 'newest') params.set('sort', filters.sort);
+  return params;
+};
+
 const ProductListingClient = ({
   initialProducts,
   initialPagination,
   initialFilters,
 }: ProductListingClientProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  // State
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [pagination, setPagination] = useState(initialPagination);
-  const [isLoading, setIsLoading] = useState(false);
-  const [filters, setFilters] = useState<ProductFiltersType>(initialFilters);
-
-  // Update URL when filters change
-  const updateUrl = (newFilters: ProductFiltersType) => {
-    const params = new URLSearchParams();
-    if (newFilters.page && newFilters.page > 1) params.set('page', String(newFilters.page));
-    if (newFilters.limit) params.set('limit', String(newFilters.limit));
-    if (newFilters.search) params.set('search', newFilters.search);
-    if (newFilters.category) params.set('category', newFilters.category);
-    if (newFilters.featured) params.set('featured', 'true');
-    if (newFilters.sort && newFilters.sort !== 'newest') params.set('sort', newFilters.sort);
-
-    const url = `${pathname}?${params.toString()}`;
-    router.push(url, { scroll: false });
-  };
-
-  // Fetch products when filters change
-  const fetchProducts = async (newFilters: ProductFiltersType) => {
-    setIsLoading(true);
-    try {
-      const response = await productService.getProducts(newFilters);
-      setProducts(response.products);
-      setPagination(response.pagination);
-    } catch (error) {
-      console.error('Failed to fetch products', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Handle filter changes
-  const handleFilterChange = (newFilters: Partial<ProductFiltersType>) => {
-    const updated = { ...filters, ...newFilters, page: 1 };
-    setFilters(updated);
-    updateUrl(updated);
-    fetchProducts(updated);
-  };
-
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    const updated = { ...filters, page };
-    setFilters(updated);
-    updateUrl(updated);
-    fetchProducts(updated);
-  };
-
-  // Handle sort change
-  const handleSortChange = (sort: string) => {
-    handleFilterChange({ sort: sort as ProductFiltersType['sort'] });
-  };
-
-  // On mount, if initialProducts is empty, fetch
-  useEffect(() => {
-    if (initialProducts.length === 0 && !isLoading) {
-      fetchProducts(filters);
-    }
-  }, []);
+  const { products, pagination, isLoading, filters, handleFilterChange, handlePageChange, handleSortChange } =
+    useProductListing({ initialProducts, initialPagination, initialFilters, buildSearchParams });
 
   return (
     <section className="py-12 bg-background">
@@ -102,22 +49,14 @@ const ProductListingClient = ({
           <div className="flex flex-col gap-6 lg:flex-row">
             {/* Sidebar Filters */}
             <aside className="w-full lg:w-64 flex-shrink-0">
-              <ProductFilterSidebar
-                currentFilters={filters}
-                onFilterChange={handleFilterChange}
-              />
+              <ProductFilterSidebar currentFilters={filters} onFilterChange={handleFilterChange} />
             </aside>
 
             {/* Main Content */}
             <div className="flex-1">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-text/60 font-body">
-                  {pagination.total} products found
-                </p>
-                <ProductSort
-                  currentSort={filters.sort || 'newest'}
-                  onSortChange={handleSortChange}
-                />
+                <p className="text-sm text-text/60 font-body">{pagination.total} products found</p>
+                <ProductSort currentSort={filters.sort || 'newest'} onSortChange={handleSortChange} />
               </div>
 
               {isLoading ? (
