@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { toast } from 'sonner';
 import {
   Search,
   User,
@@ -49,12 +48,6 @@ const Header = () => {
   }, [fetchCategories]);
 
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
-
-  // Profile isn't built yet — same honest-placeholder pattern used
-  // for Buy Now/Checkout/View Orders, rather than a link to a 404.
-  const handleProfileClick = () => {
-    toast.info('Profile is coming soon — check back shortly!');
-  };
 
   return (
     <header className="sticky top-0 z-40 bg-cream border-b border-warm-beige/30">
@@ -117,14 +110,9 @@ const Header = () => {
           {/* Right Icons */}
           <div className="flex items-center gap-2 sm:gap-4">
             {user ? (
-              <button
-                type="button"
-                onClick={handleProfileClick}
-                aria-label="Profile"
-                className="text-text/70 hover:text-primary transition-colors"
-              >
+              <Link href="/profile" aria-label="Profile" className="text-text/70 hover:text-primary transition-colors">
                 <User className="h-5 w-5" />
-              </button>
+              </Link>
             ) : (
               <Link href="/login" aria-label="Login" className="text-text/70 hover:text-primary transition-colors">
                 <User className="h-5 w-5" />
@@ -225,9 +213,11 @@ const Header = () => {
                 >
                   My Orders
                 </Link>
-                <Button variant="outline" size="small" fullWidth className="mt-2" onClick={handleProfileClick}>
-                  My Profile
-                </Button>
+                <Link href="/profile" className="mt-2" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="outline" size="small" fullWidth>
+                    My Profile
+                  </Button>
+                </Link>
               </>
             ) : (
               <Link href="/login" className="mt-2" onClick={() => setIsMobileMenuOpen(false)}>
