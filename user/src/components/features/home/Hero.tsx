@@ -70,16 +70,24 @@ const Hero = () => {
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
 
-            {/* Trust strip mini — untouched, redesign deferred */}
+            {/* Trust strip mini — untouched, redesign deferred. The
+                icon+text split into two explicit spans (rather than an
+                icon element followed by loose text on the same line)
+                fixes a pre-existing SSR/CSR hydration mismatch — the
+                gap gets handled by flex `gap-1.5`, not a literal space
+                character in the text node. */}
             <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2 font-body text-sm text-text/50">
               <span className="flex items-center gap-1.5">
-                <span className="text-accent">&#10003;</span> Authentic &amp; Original
+                <span className="text-accent">&#10003;</span>
+                <span>Authentic &amp; Original</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="text-accent">&#10003;</span> Sustainable &amp; Ethical
+                <span className="text-accent">&#10003;</span>
+                <span>Sustainable &amp; Ethical</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="text-accent">&#10003;</span> Free Shipping
+                <span className="text-accent">&#10003;</span>
+                <span>Free Shipping</span>
               </span>
             </div>
           </div>
