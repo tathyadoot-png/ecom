@@ -9,7 +9,7 @@ interface RelatedProductsProps {
 
 const RelatedProducts = ({ products }: RelatedProductsProps) => {
   return (
-    <section className="bg-cream py-16">
+    <section className="bg-cream py-16 pb-24 lg:pb-16">
       <Container>
         <SectionHeading
           title="You Might Also Like"

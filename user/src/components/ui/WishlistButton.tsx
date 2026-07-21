@@ -35,6 +35,14 @@ const WishlistButton = ({ product, variant = 'card', className }: WishlistButton
         variant === 'card'
           ? 'h-9 w-9 bg-cream/85 text-text/50 shadow-soft hover:bg-cream hover:text-primary'
           : 'h-12 w-12 border border-warm-beige bg-cream text-text/60 hover:border-primary hover:text-primary',
+        // On the card variant, stay almost invisible until hover/focus —
+        // unless the product is already wishlisted, in which case "you've
+        // saved this" stays a glanceable signal rather than disappearing
+        // along with the plain invitation to save it. Always visible on
+        // touch, where there's no hover to reveal it.
+        variant === 'card' &&
+          !isWishlisted &&
+          'opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100',
         className
       )}
     >

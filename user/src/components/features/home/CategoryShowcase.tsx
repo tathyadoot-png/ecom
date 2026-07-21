@@ -27,9 +27,9 @@ const CategoryShowcase = () => {
             title="Shop by Categories"
             subtitle="Discover treasures from across India"
           />
-          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} variant="rect" className="h-72 w-full rounded-card" />
+          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-10">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <Skeleton key={i} variant="rect" className="aspect-[4/5] w-full rounded-card" />
             ))}
           </div>
         </Container>
@@ -53,11 +53,22 @@ const CategoryShowcase = () => {
           title="Shop by Categories"
           subtitle="Discover treasures from across India"
         />
-        <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {displayCategories.map((category) => (
-            <CategoryCard key={category._id} category={category} variant="default" />
+
+        {/* Mobile: a horizontal snap-scroll row — swiping through a set
+            of collections reads as browsing, where a tall vertical
+            stack of full-width tiles reads as a list. Reverts to a
+            2-column grid from sm: up — wider cards give the imagery
+            more presence than a 3rd column would, and two columns
+            stays graceful with any category count (at most one card
+            trails alone in a half-empty row, never two-thirds of one). */}
+        <div className="-mx-4 mt-14 flex gap-5 overflow-x-auto px-4 pb-2 snap-x snap-mandatory sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible sm:px-0 sm:pb-0 lg:gap-10">
+          {displayCategories.map((category, index) => (
+            <div key={category._id} className="w-[78vw] flex-shrink-0 snap-start sm:w-auto">
+              <CategoryCard category={category} index={index} />
+            </div>
           ))}
         </div>
+
         {categories.length > 6 && (
           <div className="mt-14 text-center">
             <Link href="/categories">

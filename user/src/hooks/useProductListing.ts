@@ -39,6 +39,7 @@ export function useProductListing({
   const [pagination, setPagination] = useState(initialPagination);
   const [isLoading, setIsLoading] = useState(false);
   const [filters, setFilters] = useState<ProductFilters>(initialFilters);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (resyncKey === undefined) return;
@@ -54,12 +55,14 @@ export function useProductListing({
 
   const fetchProducts = async (newFilters: ProductFilters) => {
     setIsLoading(true);
+    setError(null);
     try {
       const response = await productService.getProducts(newFilters);
       setProducts(response.products);
       setPagination(response.pagination);
-    } catch (error) {
-      console.error('Failed to fetch products', error);
+    } catch (err) {
+      console.error('Failed to fetch products', err);
+      setError('Something went wrong while loading products.');
     } finally {
       setIsLoading(false);
     }
@@ -83,13 +86,17 @@ export function useProductListing({
     handleFilterChange({ sort: sort as ProductFilters['sort'] });
   };
 
+  const retry = () => fetchProducts(filters);
+
   return {
     products,
     pagination,
     isLoading,
+    error,
     filters,
     handleFilterChange,
     handlePageChange,
     handleSortChange,
+    retry,
   };
 }

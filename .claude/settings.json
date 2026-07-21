@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/products/the-clooth)",
+      "Bash(curl -s \"http://localhost:3000/products\")",
+      "Bash(curl -s http://localhost:3000/products/the-clooth -o C:/Users/SOCIYO/AppData/Local/Temp/claude/d--developers-ecom-old/9ea47902-c7e2-4f24-8b14-7aee61cdcff2/scratchpad/pdp-check.html)",
+      "Bash(node -e ' *)"
+    ]
+  }
+}

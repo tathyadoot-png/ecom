@@ -19,25 +19,27 @@ export const metadata: Metadata = {
 };
 
 interface ProductsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string;
     limit?: string;
     search?: string;
     category?: string;
     featured?: string;
     sort?: string;
-  };
+  }>;
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const resolvedSearchParams = await searchParams;
+
   // Build filter object with proper types
   const filters: ProductFilters = {
-    page: searchParams.page ? parseInt(searchParams.page) : 1,
-    limit: searchParams.limit ? parseInt(searchParams.limit) : 12,
-    search: searchParams.search || '',
-    category: searchParams.category || '',
-    featured: searchParams.featured === 'true' ? true : undefined,
-    sort: (searchParams.sort as ProductFilters['sort']) || 'newest',
+    page: resolvedSearchParams.page ? parseInt(resolvedSearchParams.page) : 1,
+    limit: resolvedSearchParams.limit ? parseInt(resolvedSearchParams.limit) : 12,
+    search: resolvedSearchParams.search || '',
+    category: resolvedSearchParams.category || '',
+    featured: resolvedSearchParams.featured === 'true' ? true : undefined,
+    sort: (resolvedSearchParams.sort as ProductFilters['sort']) || 'newest',
   };
 
   // Fetch initial data

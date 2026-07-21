@@ -1,11 +1,17 @@
 'use client';
 
+import { useRef, useState } from 'react';
+import { AlertTriangle, PackageSearch } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/Pagination';
 import { ProductGrid } from './ProductGrid';
 import { ProductFilterSidebar } from './ProductFilterSidebar';
-import { ProductSort } from './ProductSort';
-import { Pagination } from '@/components/ui/Pagination';
+import { ProductToolbar } from './ProductToolbar';
+import { FilterSheet } from './FilterSheet';
 import { ProductSkeletonGrid } from './ProductSkeletonGrid';
 import { useProductListing } from '@/hooks/useProductListing';
 import { Product, ProductsResponse, ProductFilters as ProductFiltersType } from '@/types/product.types';
@@ -32,41 +38,99 @@ const ProductListingClient = ({
   initialPagination,
   initialFilters,
 }: ProductListingClientProps) => {
-  const { products, pagination, isLoading, filters, handleFilterChange, handlePageChange, handleSortChange } =
-    useProductListing({ initialProducts, initialPagination, initialFilters, buildSearchParams });
+  const {
+    products,
+    pagination,
+    isLoading,
+    error,
+    filters,
+    handleFilterChange,
+    handlePageChange,
+    handleSortChange,
+    retry,
+  } = useProductListing({ initialProducts, initialPagination, initialFilters, buildSearchParams });
+
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const filterTriggerRef = useRef<HTMLButtonElement>(null);
+
+  const activeFilterCount = (filters.category ? 1 : 0) + (filters.featured ? 1 : 0);
+  const hasActiveFilters = activeFilterCount > 0;
+
+  const closeFilterSheet = () => {
+    setIsFilterSheetOpen(false);
+    filterTriggerRef.current?.focus();
+  };
 
   return (
-    <section className="py-12 bg-background">
+    <section className="bg-background py-10 lg:py-14">
       <Container>
-        <div className="flex flex-col gap-6">
-          <SectionHeading
-            title="All Products"
-            subtitle="Discover handcrafted treasures from our artisans"
-            align="left"
-            className="text-left"
-          />
+        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Shop' }]} className="mb-8" />
 
-          <div className="flex flex-col gap-6 lg:flex-row">
-            {/* Sidebar Filters */}
-            <aside className="w-full lg:w-64 flex-shrink-0">
+        <SectionHeading
+          title="The Full Collection"
+          subtitle="Handcrafted pieces created by master artisans, gathered from workshops across India."
+          align="left"
+          className="mb-10 lg:mb-14"
+        />
+
+        <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-14">
+          <aside className="hidden lg:block">
+            <div className="sticky top-8">
               <ProductFilterSidebar currentFilters={filters} onFilterChange={handleFilterChange} />
-            </aside>
+            </div>
+          </aside>
 
-            {/* Main Content */}
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-text/60 font-body">{pagination.total} products found</p>
-                <ProductSort currentSort={filters.sort || 'newest'} onSortChange={handleSortChange} />
-              </div>
+          <div className="min-w-0">
+            <ProductToolbar
+              ref={filterTriggerRef}
+              resultCount={pagination.total}
+              currentSort={filters.sort || 'newest'}
+              onSortChange={handleSortChange}
+              activeFilterCount={activeFilterCount}
+              onOpenFilters={() => setIsFilterSheetOpen(true)}
+            />
 
-              {isLoading ? (
+            <div className="pt-8 lg:pt-10">
+              {error ? (
+                <EmptyState
+                  icon={<AlertTriangle className="h-8 w-8" />}
+                  title="Something went wrong"
+                  description={error}
+                  action={
+                    <Button variant="primary" size="medium" onClick={retry}>
+                      Try Again
+                    </Button>
+                  }
+                />
+              ) : isLoading ? (
                 <ProductSkeletonGrid count={filters.limit || 12} />
+              ) : products.length === 0 ? (
+                <EmptyState
+                  icon={<PackageSearch className="h-8 w-8" />}
+                  title={hasActiveFilters ? 'No pieces match these filters' : 'No products found'}
+                  description={
+                    hasActiveFilters
+                      ? 'Try adjusting or clearing your filters to see more of the collection.'
+                      : 'Please check back soon as new pieces are added.'
+                  }
+                  action={
+                    hasActiveFilters ? (
+                      <Button
+                        variant="outline"
+                        size="medium"
+                        onClick={() => handleFilterChange({ category: undefined, featured: undefined })}
+                      >
+                        Clear Filters
+                      </Button>
+                    ) : undefined
+                  }
+                />
               ) : (
                 <ProductGrid products={products} />
               )}
 
-              {!isLoading && pagination.totalPages > 1 && (
-                <div className="mt-8 flex justify-center">
+              {!error && !isLoading && pagination.totalPages > 1 && (
+                <div className="mt-14 flex justify-center border-t border-warm-beige/40 pt-10">
                   <Pagination
                     currentPage={pagination.page}
                     totalPages={pagination.totalPages}
@@ -78,6 +142,10 @@ const ProductListingClient = ({
           </div>
         </div>
       </Container>
+
+      <FilterSheet isOpen={isFilterSheetOpen} onClose={closeFilterSheet} resultCount={pagination.total}>
+        <ProductFilterSidebar currentFilters={filters} onFilterChange={handleFilterChange} showHeading={false} />
+      </FilterSheet>
     </section>
   );
 };

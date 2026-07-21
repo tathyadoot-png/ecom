@@ -25,7 +25,7 @@ const Hero = () => {
 
       <Container className="relative">
         {/* Asymmetric editorial grid — 5/12 text, 7/12 image */}
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-10">
+        <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-12 lg:gap-10">
           {/* Text column */}
           <div className="animate-fade-in flex flex-col gap-7 lg:col-span-5">
             {/* Luxury label */}

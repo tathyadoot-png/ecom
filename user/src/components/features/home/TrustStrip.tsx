@@ -2,7 +2,6 @@
 
 import { Container } from '@/components/ui/Container';
 import {
-  Shield,
   Leaf,
   Truck,
   CreditCard,
@@ -11,45 +10,26 @@ import {
 } from 'lucide-react';
 
 const trustItems = [
-  {
-    icon: HeartHandshake,
-    label: '100% Handmade',
-    description: 'Products crafted with love',
-  },
-  {
-    icon: Leaf,
-    label: 'Eco-friendly & Fair Trade',
-    description: 'Sustainable & ethical',
-  },
-  {
-    icon: Truck,
-    label: 'Free Shipping',
-    description: 'On orders above ₹999',
-  },
-  {
-    icon: CreditCard,
-    label: 'Secure Payments',
-    description: '100% safe & secure',
-  },
-  {
-    icon: Headphones,
-    label: '24/7 Support',
-    description: "We're here to help",
-  },
+  { icon: HeartHandshake, label: '100% Handmade' },
+  { icon: Leaf, label: 'Eco-friendly & Fair Trade' },
+  { icon: Truck, label: 'Free Shipping Above ₹999' },
+  { icon: CreditCard, label: 'Secure Payments' },
+  { icon: Headphones, label: '24/7 Support' },
 ];
 
+// A quiet, single line of assurances — no circular icon badges, no
+// accent color, no secondary description line. Small thin-stroke icons
+// and hairline dividers, closer to a masthead credit line than a
+// feature grid.
 const TrustStrip = () => {
   return (
-    <section className="border-y border-warm-beige/20 bg-cream py-10">
+    <section className="border-y border-warm-beige/20 bg-cream py-8">
       <Container>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 lg:justify-between">
           {trustItems.map((item, index) => (
-            <div key={index} className="flex flex-col items-center text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-warm-beige/20 text-accent">
-                <item.icon className="h-5 w-5" />
-              </div>
-              <h4 className="font-heading text-base font-medium text-text">{item.label}</h4>
-              <p className="font-body text-xs text-text/50">{item.description}</p>
+            <div key={index} className="flex items-center gap-2.5 text-text/55">
+              <item.icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.5} />
+              <span className="font-body text-xs uppercase tracking-widest">{item.label}</span>
             </div>
           ))}
         </div>

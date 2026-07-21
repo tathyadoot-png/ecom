@@ -1,4 +1,3 @@
-import { Card } from '@/components/ui/Card';
 import { Product } from '@/types/product.types';
 
 interface ProductSpecificationsProps {
@@ -7,9 +6,10 @@ interface ProductSpecificationsProps {
 
 // The backend Product schema has no dedicated specifications field —
 // this surfaces the structured facts that do exist rather than
-// fabricating ones. Extend once the backend adds real spec fields
-// (materials, dimensions, etc. — natural fit for a handcrafted-goods
-// marketplace).
+// fabricating ones (material/dimensions/weight/color don't exist on
+// the schema). Extend once the backend adds real spec fields. No
+// card box — a plain hairline-divided list, consistent with the
+// filter sidebar's treatment on the Listing page.
 const ProductSpecifications = ({ product }: ProductSpecificationsProps) => {
   const categoryName =
     typeof product.category === 'object' ? product.category.name : undefined;
@@ -21,20 +21,20 @@ const ProductSpecifications = ({ product }: ProductSpecificationsProps) => {
   ];
 
   return (
-    <Card padding="md" className="h-fit">
-      <h3 className="mb-4 font-heading text-lg text-text">Product Details</h3>
-      <dl className="space-y-3">
+    <div>
+      <h3 className="mb-5 font-heading text-xl font-light text-text">Details</h3>
+      <dl>
         {specs.map(([label, value]) => (
           <div
             key={label}
-            className="flex justify-between gap-4 border-b border-warm-beige/40 pb-3 font-body text-sm last:border-0 last:pb-0"
+            className="flex justify-between gap-4 border-b border-warm-beige/40 py-3 font-body text-sm first:pt-0 last:border-0"
           >
             <dt className="text-text/50">{label}</dt>
             <dd className="text-right text-text">{value}</dd>
           </div>
         ))}
       </dl>
-    </Card>
+    </div>
   );
 };
 

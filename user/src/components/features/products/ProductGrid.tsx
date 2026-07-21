@@ -1,3 +1,5 @@
+'use client';
+
 import { Product } from '@/types/product.types';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { useCartStore } from '@/store/cart.store';
