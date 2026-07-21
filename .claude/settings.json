@@ -4,7 +4,12 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/products/the-clooth)",
       "Bash(curl -s \"http://localhost:3000/products\")",
       "Bash(curl -s http://localhost:3000/products/the-clooth -o C:/Users/SOCIYO/AppData/Local/Temp/claude/d--developers-ecom-old/9ea47902-c7e2-4f24-8b14-7aee61cdcff2/scratchpad/pdp-check.html)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(curl -s http://localhost:5000/api/artisans/karishma-fasion)",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\);console.log\\(JSON.stringify\\(j.data,null,2\\).slice\\(0,800\\)\\);}\\)\")",
+      "Bash(curl -s http://localhost:5000/api/artisans/karishma-fasion/products)",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\);console.log\\('artisan:', JSON.stringify\\(j.data.artisan\\)\\); console.log\\('product count:', j.data.products.length\\); console.log\\('pagination:', JSON.stringify\\(j.data.pagination\\)\\);}\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5000/api/artisans/nonexistent-slug-xyz)"
     ]
   }
 }

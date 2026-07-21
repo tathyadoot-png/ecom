@@ -20,6 +20,7 @@ import adminRoutes from "./modules/admin/admin.routes";
 import userRoutes from "./modules/users/user.routes";
 
 import storeRoutes from "./modules/store/store.routes";
+import artisanRoutes from "./modules/artisans/artisan.routes";
 const app = express();
 
 
@@ -96,6 +97,11 @@ app.use(
 app.use(
   "/api/stores",
   storeRoutes
+);
+
+app.use(
+  "/api/artisans",
+  artisanRoutes
 );
 
 

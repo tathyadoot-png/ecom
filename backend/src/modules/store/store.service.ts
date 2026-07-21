@@ -106,6 +106,30 @@ export const updateStoreStatus =
     return store;
   };
 
+export const updateStoreFlags =
+  async (
+    storeId: string,
+    flags: { featured?: boolean; verified?: boolean }
+  ) => {
+    const store =
+      await Store.findById(
+        storeId
+      );
+
+    if (!store) {
+      throw new ApiError(
+        404,
+        "Store not found"
+      );
+    }
+
+    Object.assign(store, flags);
+
+    await store.save();
+
+    return store;
+  };
+
 
 
 

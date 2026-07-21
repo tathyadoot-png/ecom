@@ -7,7 +7,8 @@ import {
   updateStoreStatusController,
   getVendorDashboardStatsController,
   updateMyStoreController,
-  getStoreByIdController
+  getStoreByIdController,
+  updateStoreFlagsController
 } from "./store.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -35,6 +36,18 @@ router.post(
     {
       name: "banner",
       maxCount: 1,
+    },
+    {
+      name: "coverImage",
+      maxCount: 1,
+    },
+    {
+      name: "portraitImage",
+      maxCount: 1,
+    },
+    {
+      name: "gallery",
+      maxCount: 10,
     },
   ]),
 
@@ -72,6 +85,16 @@ router.patch(
   updateStoreStatusController
 );
 
+router.patch(
+  "/:id/flags",
+  authMiddleware,
+  roleMiddleware(
+    "ADMIN",
+    "SUPER_ADMIN"
+  ),
+  updateStoreFlagsController
+);
+
 
 router.get(
   "/vendor-dashboard",
@@ -100,6 +123,18 @@ router.patch(
     {
       name: "banner",
       maxCount: 1,
+    },
+    {
+      name: "coverImage",
+      maxCount: 1,
+    },
+    {
+      name: "portraitImage",
+      maxCount: 1,
+    },
+    {
+      name: "gallery",
+      maxCount: 10,
     },
   ]),
 

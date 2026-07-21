@@ -163,7 +163,7 @@ export const getProducts = async (query: any) => {
 
       path: "storeId",
 
-      select: "name slug owner",
+      select: "name slug owner logo description",
 
       populate: {
 
@@ -212,7 +212,23 @@ export const getSingleProduct = async (slug: string) => {
     isActive: true,
 
     status: ProductStatus.APPROVED,
-  }).populate("category", "name slug");
+  })
+    .populate("category", "name slug")
+    .populate({
+
+      path: "storeId",
+
+      select: "name slug owner logo description",
+
+      populate: {
+
+        path: "owner",
+
+        select: "name avatar",
+
+      },
+
+    });
 
   if (!product) {
     throw new ApiError(404, "Product not found");

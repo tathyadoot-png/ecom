@@ -12,6 +12,7 @@ import {
   getVendorDashboardStats,
   updateStore,
   getStoreById,
+  updateStoreFlags,
 } from "./store.service";
 
 
@@ -25,6 +26,7 @@ import {
 import {
   createStoreSchema,
   updateStoreSchema,
+  updateStoreFlagsSchema,
 } from "./store.validation";
 
 export const createStoreController =
@@ -49,12 +51,28 @@ const banner =
   files?.banner?.[0]
     ?.path || "";
 
+const coverImage =
+  files?.coverImage?.[0]
+    ?.path || "";
+
+const portraitImage =
+  files?.portraitImage?.[0]
+    ?.path || "";
+
+const gallery =
+  files?.gallery?.map(
+    (file: any) => file.path
+  ) || [];
+
 const store =
   await createStore(
     {
       ...validatedData,
       logo,
       banner,
+      coverImage,
+      portraitImage,
+      gallery,
     },
     req.user._id
   );
@@ -165,6 +183,22 @@ export const updateStoreStatusController =
         files?.banner?.[0]
           ?.path;
 
+      const coverImage =
+        files?.coverImage?.[0]
+          ?.path;
+
+      const portraitImage =
+        files?.portraitImage?.[0]
+          ?.path;
+
+      // Only replaces the gallery when new files are actually
+      // uploaded — an unrelated profile edit (e.g. just the story
+      // text) must never silently wipe existing gallery images.
+      const gallery =
+        files?.gallery?.map(
+          (file: any) => file.path
+        );
+
       const store =
         await updateStore(
           req.user._id,
@@ -177,6 +211,18 @@ export const updateStoreStatusController =
 
             ...(banner && {
               banner,
+            }),
+
+            ...(coverImage && {
+              coverImage,
+            }),
+
+            ...(portraitImage && {
+              portraitImage,
+            }),
+
+            ...(gallery && {
+              gallery,
             }),
           }
         );
@@ -205,6 +251,34 @@ export const updateStoreStatusController =
       return successResponse(
         res,
         "Store fetched",
+        store
+      );
+    }
+  );
+
+  // Admin-only curation — "featured" and "verified" are trust signals
+  // an admin panel will manage later; kept separate from the vendor's
+  // own update endpoint so they can never be self-assigned.
+  export const updateStoreFlagsController =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+      const validatedData =
+        updateStoreFlagsSchema.parse(
+          req.body
+        );
+
+      const store =
+        await updateStoreFlags(
+          req.params.id as string,
+          validatedData
+        );
+
+      return successResponse(
+        res,
+        "Store flags updated",
         store
       );
     }
