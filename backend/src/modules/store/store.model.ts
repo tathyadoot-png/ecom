@@ -10,7 +10,7 @@ export enum StoreStatus {
   REJECTED = "REJECTED",
 
   SUSPENDED = "SUSPENDED",
-}
+}   
 
 const storeSchema =
   new Schema(

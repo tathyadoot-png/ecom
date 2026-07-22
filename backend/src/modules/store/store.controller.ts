@@ -29,6 +29,25 @@ import {
   updateStoreFlagsSchema,
 } from "./store.validation";
 
+// Multipart/form-data has no native nested-object representation —
+// every field arrives as a flat string. socialLinks and seo are both
+// validated as nested objects, so the client sends each JSON-encoded
+// under one field; this unpacks them back into objects before Zod
+// sees them. Left alone (and not a string) for plain JSON requests,
+// where they're already objects.
+const parseNestedJsonFields = (body: any) => {
+  for (const field of ["socialLinks", "seo"]) {
+    if (typeof body[field] === "string") {
+      try {
+        body[field] = JSON.parse(body[field]);
+      } catch {
+        delete body[field];
+      }
+    }
+  }
+  return body;
+};
+
 export const createStoreController =
   asyncHandler(
     async (
@@ -37,7 +56,7 @@ export const createStoreController =
     ) => {
     const validatedData =
   createStoreSchema.parse(
-    req.body
+    parseNestedJsonFields(req.body)
   );
 
 const files =
@@ -169,7 +188,7 @@ export const updateStoreStatusController =
 
       const validatedData =
         updateStoreSchema.parse(
-          req.body
+          parseNestedJsonFields(req.body)
         );
 
       const files =
@@ -191,13 +210,27 @@ export const updateStoreStatusController =
         files?.portraitImage?.[0]
           ?.path;
 
-      // Only replaces the gallery when new files are actually
-      // uploaded — an unrelated profile edit (e.g. just the story
-      // text) must never silently wipe existing gallery images.
-      const gallery =
-        files?.gallery?.map(
-          (file: any) => file.path
-        );
+      // The gallery is built from two channels in the same request:
+      // kept/reordered EXISTING urls arrive as plain body strings
+      // (validated by Zod into validatedData.gallery), and newly
+      // uploaded files arrive via multer into files.gallery. Both are
+      // merged — previously, new uploads silently replaced the whole
+      // array, which would have wiped out any kept images the moment
+      // a vendor added one new photo alongside their existing gallery.
+      // `galleryTouched` is the authoritative signal that the client's
+      // Gallery section was submitted at all — a plain multipart
+      // request has no other way to represent "explicitly cleared to
+      // zero images" versus "gallery wasn't part of this update".
+      const keptGalleryUrls: string[] = Array.isArray(validatedData.gallery)
+        ? validatedData.gallery
+        : [];
+
+      const uploadedGalleryPaths: string[] =
+        files?.gallery?.map((file: any) => file.path) || [];
+
+      const gallerySubmitted = req.body.galleryTouched === "true";
+
+      const gallery = [...keptGalleryUrls, ...uploadedGalleryPaths];
 
       const store =
         await updateStore(
@@ -221,7 +254,7 @@ export const updateStoreStatusController =
               portraitImage,
             }),
 
-            ...(gallery && {
+            ...(gallerySubmitted && {
               gallery,
             }),
           }

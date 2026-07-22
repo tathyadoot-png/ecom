@@ -108,4 +108,21 @@ export const getStoreById =
 
     return res.data;
   };
-  
+
+export const updateStoreFlags =
+  async (
+    id: string,
+    data: {
+      featured?: boolean;
+      verified?: boolean;
+      displayOrder?: number;
+    }
+  ) => {
+    const res =
+      await api.patch(
+        `/stores/${id}/flags`,
+        data
+      );
+
+    return res.data;
+  };

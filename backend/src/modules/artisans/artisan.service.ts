@@ -1,5 +1,6 @@
 import { Store, StoreStatus } from "../store/store.model";
 import { Product, ProductStatus } from "../products/product.model";
+import { User } from "../auth/auth.model";
 import { ApiError } from "../../utils/ApiError";
 
 // Every public artisan route reads through the existing Store model —
@@ -52,6 +53,16 @@ const attachProductCounts = async (artisans: any[]) => {
   }));
 };
 
+// Directory-specific sort options (Phase 8B) — Newest/Experience/
+// Alphabetical/Display Order. Falls back to the same displayOrder+
+// createdAt used everywhere else on an unrecognized value.
+const SORT_OPTIONS: Record<string, Record<string, 1 | -1>> = {
+  newest: { createdAt: -1 },
+  experience: { yearsOfExperience: -1, createdAt: -1 },
+  alphabetical: { name: 1 },
+  displayOrder: { displayOrder: 1, createdAt: -1 },
+};
+
 export const getPublicArtisans = async (query: any) => {
   const page = Number(query.page) || 1;
   const limit = Number(query.limit) || 12;
@@ -68,13 +79,44 @@ export const getPublicArtisans = async (query: any) => {
   }
 
   if (query.search) {
-    filter.name = { $regex: query.search, $options: "i" };
+    const search = { $regex: query.search, $options: "i" };
+    // "Artisan Name" as shown on every card is the owner's name, not
+    // the store name — Store.name (e.g. "the mask") and owner.name
+    // (e.g. "tanish", the person actually displayed) are different
+    // fields, so a search purely on Store fields would silently fail
+    // to find an artisan by the exact name printed on their own card.
+    const matchingOwners = await User.find({ name: search }).select("_id");
+    filter.$or = [
+      { name: search },
+      { craft: search },
+      { city: search },
+      { state: search },
+      { owner: { $in: matchingOwners.map((u) => u._id) } },
+    ];
   }
+
+  if (query.featured === "true") {
+    filter.featured = true;
+  }
+
+  if (query.verified === "true") {
+    filter.verified = true;
+  }
+
+  if (query.customOrders === "true") {
+    filter.customOrders = true;
+  }
+
+  if (query.experienceMin) {
+    filter.yearsOfExperience = { $gte: Number(query.experienceMin) };
+  }
+
+  const sort = SORT_OPTIONS[query.sort as string] || SORT_OPTIONS.displayOrder;
 
   const artisans = await Store.find(filter)
     .select(PUBLIC_STORE_SELECT)
     .populate("owner", "name avatar")
-    .sort({ displayOrder: 1, createdAt: -1 })
+    .sort(sort)
     .skip(skip)
     .limit(limit);
 

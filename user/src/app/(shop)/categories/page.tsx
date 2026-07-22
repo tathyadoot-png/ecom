@@ -44,7 +44,7 @@ export default async function CategoriesPage() {
       ) : (
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {activeCategories.map((category) => (
-            <CategoryCard key={category._id} category={category} variant="default" />
+            <CategoryCard key={category._id} category={category} />
           ))}
         </div>
       )}

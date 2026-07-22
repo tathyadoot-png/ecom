@@ -3,6 +3,7 @@ import Hero from '@/components/features/home/Hero';
 import TrustStrip from '@/components/features/home/TrustStrip';
 import FeaturedProducts from '@/components/features/home/FeaturedProducts';
 import CategoryShowcase from '@/components/features/home/CategoryShowcase';
+import ArtisanSection from '@/components/features/home/ArtisanSection';
 import WhyChoose from '@/components/features/home/WhyChoose';
 import { SITE } from '@/constants/site';
 
@@ -27,6 +28,7 @@ export default function HomePage() {
       <Hero />
       <TrustStrip />
       <CategoryShowcase />
+      <ArtisanSection />
       <FeaturedProducts />
       <WhyChoose />
     </>

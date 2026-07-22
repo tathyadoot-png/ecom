@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import Link from "next/link";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAuthStore } from "@/store/auth-store";
 
@@ -14,6 +14,7 @@ export default function ProtectedRoute({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const {
     user,
@@ -21,15 +22,21 @@ export default function ProtectedRoute({
   } = useAuthStore();
 
   useEffect(() => {
+  // Only bounce a vendor away from admin-only pages (Stores,
+  // Products, Customers, ...) — this used to fire unconditionally on
+  // every render, which redirected vendors off of their OWN pages
+  // too (/vendor/store, /vendor/products, ...), making the entire
+  // vendor section unreachable by direct navigation.
   if (
     user?.role ===
-    "VENDOR"
+    "VENDOR" &&
+    !pathname?.startsWith("/vendor")
   ) {
     router.push(
       "/vendor"
     );
   }
-}, [user, router]);
+}, [user, pathname, router]);
 
 
   useEffect(() => {
