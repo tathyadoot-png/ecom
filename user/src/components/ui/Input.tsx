@@ -28,8 +28,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className={cn(
               'w-full rounded-input border border-warm-beige/70 bg-cream px-4 py-3.5 font-body text-text placeholder:text-text/35 transition-all duration-200 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-accent/25',
-              leftIcon && 'pl-12',
-              rightIcon && 'pr-12',
+              // pl-12/pr-12 collide with this theme's named --spacing-12
+              // token (globals.css), which resolves to a flat 12px instead
+              // of the standard 12 * 4px = 48px — pl-11/pr-11 (44px) sit on
+              // a number the theme doesn't override.
+              leftIcon && 'pl-11',
+              rightIcon && 'pr-11',
               error && 'border-primary/60 focus:border-primary focus:ring-primary/20',
               className
             )}

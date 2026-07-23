@@ -113,6 +113,15 @@
   }
 }
 
+@keyframes slow-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.045);
+  }
+}
+
 @layer utilities {
   .animate-fade-in-down {
     animation: fade-in-down 0.25s ease-out;
@@ -124,6 +133,33 @@
     background-image: linear-gradient(90deg, var(--color-warm-beige) 0%, var(--color-cream) 50%, var(--color-warm-beige) 100%);
     background-size: 200% 100%;
     animation: shimmer 1.8s ease-in-out infinite;
+  }
+
+  /* Used by Reveal's variant="mask" — a hard-edged upward wipe for
+     full-bleed editorial imagery, in place of a plain opacity fade. */
+  .clip-path-reveal-closed {
+    clip-path: inset(0 0 100% 0);
+  }
+  .clip-path-reveal-open {
+    clip-path: inset(0 0 0% 0);
+  }
+
+  /* Very slow, barely-there ambient zoom — Hero/Manifesto imagery
+     only, never on anything with text sitting on top of the motion. */
+  .animate-slow-zoom {
+    animation: slow-zoom 22s ease-in-out infinite alternate;
+  }
+
+  /* Hides the scrollbar on an intentionally-scrollable strip (the
+     mobile category chip row) without disabling scrolling itself —
+     the swipe affordance is the chips overflowing the viewport edge,
+     not a visible scrollbar. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 

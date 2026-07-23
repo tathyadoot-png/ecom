@@ -27,3 +27,21 @@ export const deleteCategory = async (
     `/categories/${id}`
   );
 };
+
+export const updateCategory = (
+  id: string,
+  data: FormData
+) => {
+
+  return api.put(
+    `/categories/${id}`,
+    data,
+    {
+      headers: {
+        "Content-Type":
+          "multipart/form-data",
+      },
+    }
+  );
+
+};

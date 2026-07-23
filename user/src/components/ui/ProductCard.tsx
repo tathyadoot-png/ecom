@@ -84,8 +84,13 @@ const ProductCard = ({
       {/* Image — the Link wraps only the image itself; badges/buttons
           below are positioned siblings, not nested inside the anchor
           (a <button> inside an <a> is invalid HTML and a real a11y
-          issue for assistive tech, even though browsers render it). */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-warm-beige/15">
+          issue for assistive tech, even though browsers render it).
+          Square rather than 4/5 — Phase 8D.3: the tall portrait crop
+          made the card feel like it was mostly whitespace once a real
+          grid of them sat side by side; square is still an editorial
+          proportion (COS/Muji product photography), just not one that
+          eats the whole card's height doing it. */}
+      <div className="relative aspect-square overflow-hidden bg-warm-beige/15">
         <Link href={`/products/${slug}`} className="absolute inset-0 block" tabIndex={-1} aria-hidden>
           {imageUrl ? (
             <>

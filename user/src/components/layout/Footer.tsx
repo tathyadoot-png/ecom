@@ -9,6 +9,7 @@ const footerLinks = [
   { label: 'Home', href: '/' },
   { label: 'Shop', href: '/products' },
   { label: 'Categories', href: '/categories' },
+  { label: 'Our Artisans', href: '/artisans' },
   { label: 'Search', href: '/search' },
 ];
 

@@ -61,8 +61,16 @@ const Header = () => {
         isScrolled && 'shadow-soft'
       )}
     >
-      {/* Top Bar — a quiet credit line, not a second nav bar */}
-      <div className="hidden border-b border-cream/10 bg-text py-2.5 md:block">
+      {/* Top Bar — a quiet credit line, not a second nav bar. Collapses
+          away on scroll so the sticky header settles into a single,
+          more compact band rather than always carrying its full
+          two-tier height down the page. */}
+      <div
+        className={cn(
+          'hidden overflow-hidden border-b border-cream/10 bg-text transition-[max-height,opacity,padding] duration-300 ease-out md:block',
+          isScrolled ? 'max-h-0 py-0 opacity-0' : 'max-h-10 py-2.5 opacity-100'
+        )}
+      >
         <Container>
           <div className="flex items-center justify-between font-body text-[11px] tracking-[0.02em] text-cream/50">
             <span>Handcrafted by Indian Artisans</span>
@@ -77,15 +85,28 @@ const Header = () => {
         </Container>
       </div>
 
-      {/* Main Header */}
+      {/* Main Header — a touch shorter once scrolled, so the sticky
+          bar reads as a deliberately compact instrument, not just the
+          hero header dragged down the page. */}
       <Container>
-        <div className="flex h-20 items-center justify-between gap-6 md:h-24">
+        <div
+          className={cn(
+            // Explicit pixel values, not h-16/h-24 — this theme's
+            // named --spacing-16/--spacing-24 tokens (globals.css)
+            // hijack those exact utility numbers to a flat 16px/24px
+            // instead of the standard 16*4=64px / 24*4=96px, which
+            // silently broke this compact-on-scroll effect the first
+            // time it was written with the "obvious" class names.
+            'flex items-center justify-between gap-7 transition-[height] duration-300 ease-out',
+            isScrolled ? 'h-64 md:h-18' : 'h-20 md:h-[96px]'
+          )}
+        >
           {/* Logo — isolated with its own space, a hairline rule before
               the search field so it reads as the anchor, not the first
               item in a row. */}
           <Link
             href="/"
-            className="flex flex-shrink-0 items-center gap-3 md:mr-6 md:border-r md:border-warm-beige/25 md:pr-6"
+            className="flex flex-shrink-0 items-center gap-3 md:mr-2 md:border-r md:border-warm-beige/25 md:pr-7"
           >
             <div className="relative h-11 w-11">
               <Image
@@ -105,14 +126,16 @@ const Header = () => {
           {/* Search - desktop. Styled entirely through SearchBar's
               existing inputClassName prop — no change to its behavior
               or internals — as a distinct premium object: a resting
-              shadow, a deeper one on focus, warmer border. */}
-          <div className="hidden max-w-md flex-1 md:block lg:max-w-lg">
+              shadow, a deeper one on focus, warmer border. Capped at
+              max-w-md even on wide screens so it reads as one element
+              among several, not the widest thing in the header. */}
+          <div className="hidden max-w-md flex-1 md:block">
             <SearchBar inputClassName="rounded-full border-warm-beige/50 bg-cream shadow-soft transition-shadow focus:border-accent/50 focus:shadow-medium focus:ring-1 focus:ring-accent/40" />
           </div>
 
           {/* Right Icons */}
-          <div className="flex items-center">
-            <div className="flex items-center gap-0.5 sm:mr-1 sm:border-r sm:border-warm-beige/30 sm:pr-1">
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 sm:mr-2 sm:border-r sm:border-warm-beige/30 sm:pr-2">
               {user ? (
                 <Link href="/profile" aria-label="Profile" className={iconLinkClass}>
                   <User className="h-5 w-5" />
@@ -130,7 +153,7 @@ const Header = () => {
               {user && <LogoutButton className={iconLinkClass} />}
             </div>
 
-            <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-1">
               <Link href="/wishlist" aria-label="Wishlist" className={iconLinkClass}>
                 <Heart className="h-5 w-5" />
                 <CountBadge count={wishlistCount} />
@@ -142,7 +165,7 @@ const Header = () => {
             </div>
 
             {!user && (
-              <Link href="/login" className="ml-3 hidden sm:flex">
+              <Link href="/login" className="ml-4 hidden sm:flex">
                 <Button variant="outline" size="small">
                   Login / Register
                 </Button>

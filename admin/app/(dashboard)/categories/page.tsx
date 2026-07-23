@@ -12,35 +12,30 @@ import {
   FolderOpen,
   ImagePlus,
   Loader2,
-  Trash2
+  Trash2,
+  Pencil,
+  X
 } from "lucide-react";
 
 import { toast } from "sonner";
 
 import {
   createCategory,
+  updateCategory,
   getCategories,
-  deleteCategory
+  deleteCategory,
 } from "@/services/category.service";
 
 interface Category {
-
   _id: string;
-
   name: string;
-
   slug: string;
-
   image: string;
-
   description: string;
-
   displayOrder: number;
-
   featured: boolean;
-
+  isActive?: boolean;
   createdAt?: string;
-
 }
 
 export default function CategoriesPage() {
@@ -62,6 +57,15 @@ export default function CategoriesPage() {
 
   const [saving, setSaving] =
     useState(false);
+
+    const [editingCategory, setEditingCategory] =
+  useState<Category | null>(null);
+
+const [existingImage, setExistingImage] =
+  useState("");
+
+const isEditMode =
+  editingCategory !== null;
 
   const [search, setSearch] =
     useState("");
@@ -107,6 +111,55 @@ export default function CategoriesPage() {
 
   }, []);
 
+  const resetForm = () => {
+
+  setEditingCategory(null);
+
+  setName("");
+
+  setDescription("");
+
+  setImage(null);
+
+  setExistingImage("");
+
+  setDisplayOrder(0);
+
+  if (fileRef.current) {
+    fileRef.current.value = "";
+  }
+
+};
+
+
+const handleEdit = (
+  category: Category
+) => {
+
+  setEditingCategory(category);
+
+  setName(category.name);
+
+  setDescription(
+    category.description || ""
+  );
+
+  setDisplayOrder(
+    category.displayOrder || 0
+  );
+
+  setExistingImage(
+    category.image || ""
+  );
+
+  setImage(null);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+
+};
   const filteredCategories =
     categories.filter((item) =>
 
@@ -118,111 +171,113 @@ export default function CategoriesPage() {
 
     );
 
-  const handleSubmit =
-    async (
-      e: React.FormEvent
-    ) => {
+const handleSubmit = async (
+  e: React.FormEvent
+) => {
 
-      e.preventDefault();
+  e.preventDefault();
 
-      if (!name.trim()) {
+  if (!name.trim()) {
+    toast.error("Category name is required");
+    return;
+  }
 
-        toast.error(
-          "Category name is required"
-        );
+  if (!isEditMode && !image) {
+    toast.error("Please upload category image");
+    return;
+  }
 
-        return;
+  try {
 
-      }
+    setSaving(true);
 
-      if (!image) {
+    const formData = new FormData();
 
-        toast.error(
-          "Please upload category image"
-        );
+    formData.append("name", name);
 
-        return;
+    formData.append("slug", slug);
 
-      }
+    formData.append(
+      "description",
+      description
+    );
 
-      try {
+    formData.append(
+      "displayOrder",
+      String(displayOrder)
+    );
 
-        setSaving(true);
+if (editingCategory) {
 
-        const formData =
-          new FormData();
+  formData.append(
+    "featured",
+    String(
+      editingCategory.featured
+    )
+  );
 
-        formData.append(
-          "name",
-          name
-        );
+  formData.append(
+    "isActive",
+    String(
+      editingCategory.isActive
+    )
+  );
 
-        formData.append(
-          "slug",
-          slug
-        );
+}
 
-        formData.append(
-          "description",
-          description
-        );
+    formData.append(
+      "folder",
+      "commerce-platform/categories"
+    );
 
-        formData.append(
-          "displayOrder",
-          String(displayOrder)
-        )
+    if (image) {
+      formData.append(
+        "image",
+        image
+      );
+    }
 
-        formData.append(
-          "folder",
-          "commerce-platform/categories"
-        );
+    if (isEditMode) {
 
-        formData.append(
-          "image",
-          image
-        );
+      await updateCategory(
+        editingCategory!._id,
+        formData
+      );
 
-        await createCategory(
-          formData
-        );
+      toast.success(
+        "Category updated successfully"
+      );
 
-        toast.success(
-          "Category created successfully"
-        );
+    } else {
 
-        setName("");
+      await createCategory(
+        formData
+      );
 
-        setDescription("");
+      toast.success(
+        "Category created successfully"
+      );
 
-        setDisplayOrder(0)
+    }
 
-        setImage(null);
+    
+    resetForm();
+    fetchCategories();
 
-        if (
-          fileRef.current
-        ) {
+  } catch (error: any) {
 
-          fileRef.current.value =
-            "";
+    toast.error(
+      error?.response?.data?.message ||
+      "Something went wrong"
+    );
 
-        }
+  } finally {
 
-        fetchCategories();
+    setSaving(false);
 
-      } catch {
+  }
 
-        toast.error(
-          "Failed to create category"
-        );
-
-      } finally {
-
-        setSaving(false);
-
-      }
-
-    };
-
+};
 
   const handleDelete = async (
     id: string
@@ -316,17 +371,21 @@ export default function CategoriesPage() {
 
         <div className="border-b px-8 py-5">
 
-          <h2 className="text-xl font-semibold">
+         <h2 className="text-xl font-semibold">
 
-            Create Category
+  {isEditMode
+    ? "Edit Category"
+    : "Create Category"}
 
-          </h2>
+</h2>
 
-          <p className="text-sm text-zinc-500 mt-1">
+         <p className="text-sm text-zinc-500 mt-1">
 
-            Categories automatically appear on the storefront.
+  {isEditMode
+    ? "Update category information."
+    : "Categories automatically appear on the storefront."}
 
-          </p>
+</p>
 
         </div>
 
@@ -580,31 +639,32 @@ text-center
 
               />
 
-              {image ? (
+             {image || existingImage ? (
 
                 <div className="space-y-4">
 
                   <div className="relative mx-auto h-36 w-36 rounded-2xl overflow-hidden border">
 
-                    <Image
-
-                      src={URL.createObjectURL(image)}
-
-                      alt="preview"
-
-                      fill
-
-                      className="object-cover"
-
-                    />
+                  <Image
+  src={
+    image
+      ? URL.createObjectURL(image)
+      : existingImage
+  }
+  alt="preview"
+  fill
+  className="object-cover"
+/>
 
                   </div>
 
-                  <p className="text-sm font-medium">
+                <p className="text-sm font-medium">
 
-                    {image.name}
+  {image
+    ? image.name
+    : "Current Category Image"}
 
-                  </p>
+</p>
 
                 </div>
 
@@ -645,7 +705,47 @@ text-center
 
           </div>
 
-          <div className="flex justify-end">
+         <div className="flex justify-end gap-3">
+
+          {isEditMode && (
+
+<button
+
+type="button"
+
+onClick={resetForm}
+
+className="
+
+h-12
+
+px-8
+
+rounded-xl
+
+border
+
+hover:bg-zinc-50
+
+transition
+
+flex
+
+items-center
+
+gap-2
+
+"
+
+>
+
+<X size={18}/>
+
+Cancel
+
+</button>
+
+)}
 
             <button
 
@@ -689,10 +789,12 @@ gap-2
               )}
 
               {saving
-
-                ? "Creating..."
-
-                : "Create Category"}
+  ? isEditMode
+    ? "Updating..."
+    : "Creating..."
+  : isEditMode
+  ? "Update Category"
+  : "Create Category"}
 
             </button>
 
@@ -922,36 +1024,61 @@ gap-2
 
                       <td className="px-6 py-4">
 
-                        <div className="flex justify-center">
+                   <div className="flex items-center justify-center gap-2">
 
-                          <button
-                            onClick={() =>
-                              handleDelete(
-                                category._id
-                              )
-                            }
-                            className="
-                      w-10
-                      h-10
-                      rounded-xl
-                      border
-                      text-red-600
-                      hover:bg-red-50
-                      hover:border-red-200
-                      transition
-                      flex
-                      items-center
-                      justify-center
-                      "
-                          >
+  <button
 
-                            <Trash2
-                              size={18}
-                            />
+    onClick={() =>
+      handleEdit(category)
+    }
 
-                          </button>
+    className="
+    w-10
+    h-10
+    rounded-xl
+    border
+    text-blue-600
+    hover:bg-blue-50
+    hover:border-blue-200
+    transition
+    flex
+    items-center
+    justify-center
+    "
 
-                        </div>
+  >
+
+    <Pencil size={18} />
+
+  </button>
+
+  <button
+
+    onClick={() =>
+      handleDelete(category._id)
+    }
+
+    className="
+    w-10
+    h-10
+    rounded-xl
+    border
+    text-red-600
+    hover:bg-red-50
+    hover:border-red-200
+    transition
+    flex
+    items-center
+    justify-center
+    "
+
+  >
+
+    <Trash2 size={18} />
+
+  </button>
+
+</div>
 
                       </td>
 

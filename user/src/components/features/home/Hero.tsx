@@ -6,12 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Button } from '@/components/ui/Button';
 import { SITE } from '@/constants/site';
-
-// A technical noise texture (SVG feTurbulence), not decorative
-// artwork — generated, not an asset, kept at near-zero opacity below
-// so it reads as paper-grain warmth rather than a visible pattern.
-const GRAIN_TEXTURE =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+import { GRAIN_TEXTURE } from '@/lib/grainTexture';
 
 const Hero = () => {
   return (
@@ -61,7 +56,11 @@ const Hero = () => {
               </Link>
             </div>
 
-            {/* Secondary CTA — visibly subordinate */}
+            {/* Secondary CTA — visibly subordinate. This is Hero's
+                only closing note now; the checkmark trust row that
+                used to sit below it is gone — TrustStrip/Assurance
+                already carries that message, and repeating it here
+                was the first thing the Phase 8D.1 audit flagged. */}
             <Link
               href="/categories"
               className="group flex w-fit items-center gap-1.5 border-t border-warm-beige/30 pt-4 font-body text-xs text-text/45 transition-colors duration-200 hover:text-primary"
@@ -69,27 +68,6 @@ const Hero = () => {
               Explore Categories
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-
-            {/* Trust strip mini — untouched, redesign deferred. The
-                icon+text split into two explicit spans (rather than an
-                icon element followed by loose text on the same line)
-                fixes a pre-existing SSR/CSR hydration mismatch — the
-                gap gets handled by flex `gap-1.5`, not a literal space
-                character in the text node. */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2 font-body text-sm text-text/50">
-              <span className="flex items-center gap-1.5">
-                <span className="text-accent">&#10003;</span>
-                <span>Authentic &amp; Original</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="text-accent">&#10003;</span>
-                <span>Sustainable &amp; Ethical</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="text-accent">&#10003;</span>
-                <span>Free Shipping</span>
-              </span>
-            </div>
           </div>
 
           {/* Image column — mounted like a print: a cream mat, a thin
@@ -100,13 +78,16 @@ const Hero = () => {
           <div className="lg:col-span-7">
             <div className="border border-warm-beige/50 bg-cream p-3 shadow-medium sm:p-4">
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2px]">
-                {/* Desktop crop */}
+                {/* Desktop crop — a near-imperceptible continuous zoom,
+                    the one piece of ambient motion in the whole hero,
+                    slow enough to read as stillness rather than a
+                    slideshow. */}
                 <Image
                   src="/hero/herobg.png"
                   alt="Indian artisan at work"
                   fill
                   sizes="(max-width: 1024px) 100vw, 58vw"
-                  className="hidden object-cover object-center lg:block"
+                  className="hidden animate-slow-zoom object-cover object-center lg:block"
                 />
                 {/* Dedicated mobile/tablet crop */}
                 <Image
@@ -115,7 +96,7 @@ const Hero = () => {
                   fill
                   priority
                   sizes="100vw"
-                  className="block object-cover object-center lg:hidden"
+                  className="block animate-slow-zoom object-cover object-center lg:hidden"
                 />
                 {/* Radial vignette — photographic depth, not a
                     legibility fade */}

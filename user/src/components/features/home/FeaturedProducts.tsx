@@ -4,10 +4,18 @@ import { useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ProductCard } from '@/components/ui/ProductCard';
+import { Reveal } from '@/components/ui/Reveal';
 import { useProductStore } from '@/store/product.store'; // ✅ Correct path
 import { useCartStore } from '@/store/cart.store';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
+
+// Capped at 4 (one row on desktop, two on mobile) instead of the
+// previous 6 across 2 rows — the Phase 8D.1 brief was explicit about
+// keeping the homepage shorter even as more sections get added, and a
+// single tight row of hand-picked pieces reads more like a curated
+// edit than a shop page.
+const FEATURED_PRODUCT_LIMIT = 4;
 
 const FeaturedProducts = () => {
   const { featuredProducts, isLoading, fetchFeaturedProducts } = useProductStore();
@@ -19,16 +27,13 @@ const FeaturedProducts = () => {
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-background md:py-28">
+      <section className="bg-cream py-14 md:py-20">
         <Container>
-          <SectionHeading
-            title="Featured Treasures"
-            subtitle="Handpicked pieces that tell a story"
-          />
-          <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
-            {Array.from({ length: 3 }).map((_, i) => (
+          <SectionHeading title="Featured Treasures" subtitle="A few pieces, chosen for the hands that made them" />
+          <div className="mt-10 grid grid-cols-2 gap-5 sm:gap-32 lg:grid-cols-4 lg:gap-32">
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-4">
-                <Skeleton variant="rect" className="aspect-[4/5] w-full" />
+                <Skeleton variant="rect" className="aspect-square w-full" />
                 <Skeleton variant="text" className="h-4 w-3/4" />
                 <Skeleton variant="text" className="h-4 w-1/2" />
               </div>
@@ -46,9 +51,9 @@ const FeaturedProducts = () => {
     return null;
   }
 
-  const displayProducts = featuredProducts.slice(0, 6);
+  const displayProducts = featuredProducts.slice(0, FEATURED_PRODUCT_LIMIT);
 
-  // A 3-column grid with only one or two products to show leaves the
+  // A 4-column grid with only one or two products to show leaves the
   // rest of the row empty and reads as unfinished, not restrained —
   // this constrains the grid's width and column count to match what's
   // actually there, so a sparse result looks like a deliberately small
@@ -57,19 +62,23 @@ const FeaturedProducts = () => {
     displayProducts.length === 1
       ? 'mx-auto grid max-w-sm grid-cols-1'
       : displayProducts.length === 2
-        ? 'mx-auto grid max-w-3xl grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-10'
-        : 'grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10';
+        ? 'mx-auto grid max-w-2xl grid-cols-2 gap-5 sm:gap-32'
+        : displayProducts.length === 3
+          ? 'grid grid-cols-2 gap-5 sm:gap-32 md:grid-cols-3 lg:gap-32'
+          : 'grid grid-cols-2 gap-5 sm:gap-32 lg:grid-cols-4 lg:gap-32';
 
   return (
-    <section className="py-20 bg-background md:py-28">
+    <section className="bg-cream py-14 md:py-20">
       <Container>
         <SectionHeading
           title="Featured Treasures"
-          subtitle="Handpicked pieces that tell a story"
+          subtitle="A few pieces, chosen for the hands that made them"
         />
-        <div className={cn('mt-14', gridClass)}>
-          {displayProducts.map((product) => (
-            <ProductCard key={product._id} product={product} onAddToCart={() => addToCart(product)} />
+        <div className={cn('mt-10', gridClass)}>
+          {displayProducts.map((product, index) => (
+            <Reveal key={product._id} delay={index * 90}>
+              <ProductCard product={product} onAddToCart={() => addToCart(product)} />
+            </Reveal>
           ))}
         </div>
       </Container>

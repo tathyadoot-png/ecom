@@ -1,9 +1,9 @@
 import express from "express";
-
 import {
   create,
   getAll,
   remove,
+  update,
 } from "./category.controller";
 
 import { authMiddleware } from "../../middlewares/auth.middleware";
@@ -39,6 +39,15 @@ router.delete(
   remove
 );
 
-
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(
+    "ADMIN",
+    "SUPER_ADMIN"
+  ),
+  upload.single("image"),
+  update
+);
 
 export default router;

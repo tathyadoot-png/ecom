@@ -13,12 +13,12 @@ import { ProductFilters } from '@/types/product.types';
 import { SITE } from '@/constants/site';
 
 interface CategoryDetailPageProps {
-  params: { slug: string };
-  searchParams: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{
     page?: string;
     featured?: string;
     sort?: string;
-  };
+  }>;
 }
 
 // The backend has no single-category-by-slug endpoint — only
@@ -30,7 +30,8 @@ const getCategoryBySlug = cache(async (slug: string) => {
 });
 
 export async function generateMetadata({ params }: CategoryDetailPageProps): Promise<Metadata> {
-  const category = await getCategoryBySlug(params.slug);
+  const { slug } = await params;
+  const category = await getCategoryBySlug(slug);
 
   if (!category) {
     return { title: 'Category Not Found' };
@@ -64,18 +65,20 @@ export default async function CategoryDetailPage({
   params,
   searchParams,
 }: CategoryDetailPageProps) {
-  const category = await getCategoryBySlug(params.slug);
+  const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const category = await getCategoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
   const filters: ProductFilters = {
-    page: searchParams.page ? parseInt(searchParams.page) : 1,
+    page: resolvedSearchParams.page ? parseInt(resolvedSearchParams.page) : 1,
     limit: 12,
     category: category._id,
-    featured: searchParams.featured === 'true' ? true : undefined,
-    sort: (searchParams.sort as ProductFilters['sort']) || 'newest',
+    featured: resolvedSearchParams.featured === 'true' ? true : undefined,
+    sort: (resolvedSearchParams.sort as ProductFilters['sort']) || 'newest',
   };
 
   const initialData = await productService.getProducts(filters);
